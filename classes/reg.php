@@ -28,7 +28,7 @@ final class Reg
         <div style='background:#eee;padding:5px;'>Для завершения регистрации, выберите вашу роль, отметив чекбокс в начале формы</div>
         <br>
         <b>Авторизация через VK</b><br>
-        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/callback.php&scope=email,offline&response_type=token&v=5.92&state=1'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/callback.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
         </div>";
         } else echo "
         <div style='text-align: center'><form action='" . $_SERVER["REQUEST_URI"] . "' method='post'>
@@ -48,7 +48,7 @@ final class Reg
         </form>
         <br>
         <b>Авторизация через VK</b><br>
-        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/callback.php&scope=email,offline&response_type=token&v=5.92&state=1'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/callback.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
         </div>";
     }
 
@@ -103,9 +103,14 @@ final class Reg
         $_SESSION['name'] = htmlspecialchars($_POST['name']);
         $_SESSION['surname'] = htmlspecialchars($_POST['surname']);
         $_SESSION['email'] = htmlspecialchars($_POST['email']);
-        /*$_SERVER['PHP_AUTH_USER']=htmlspecialchars($_POST['email']);
-        $_SERVER['PHP_AUTH_PW']=htmlspecialchars($_POST['pass']);*/
+        $_SESSION['usergroup'] = htmlspecialchars($_POST['usergroup']);
+        $_SESSION['avatar'] = $this->setAvatar();
         echo 'Регистрация прошла успешно! Перенаправляем на главную...
             <script>setTimeout(function(){window.location.href="/"},1500)</script>';
+    }
+
+    private function setAvatar()
+    {
+        return (iconv_strlen($_POST['avatar']) < 4) ? 'assets/img/defaultAvatar.png' : $_POST['avatar'];
     }
 }
