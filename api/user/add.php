@@ -1,31 +1,36 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    require_once '../../database.php';
-    $db = new Database();
-    $data = prepareData($_POST);
+    if ($_POST['api_key'] == 'android') {
+        require_once '../../database.php';
+        $db = new Database();
+        $data = prepareData($_POST);
 
-    $pass = password_hash($data['pass'], PASSWORD_DEFAULT);
-    $q = $db->connection->prepare("INSERT INTO `users` (`id`, `name`, `surname`, `middle_name`, `email`, `password`, `phone`, `stdgroup`, `description`, `avatar`, `usergroup`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $pass = password_hash($data['pass'], PASSWORD_DEFAULT);
+        $q = $db->connection->prepare("INSERT INTO `users` (`id`, `name`, `surname`, `middle_name`, `email`, `password`, `phone`, `stdgroup`, `description`, `avatar`, `usergroup`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-    $q->bindParam(1, $data['name']);
-    $q->bindParam(2, $data['surname']);
-    $q->bindParam(3, $data['middlename']);
-    $q->bindParam(4, $data['email']);
-    $q->bindParam(5, $pass);
-    $q->bindParam(6, $data['tel']);
-    $q->bindParam(7, $data['std_group']);
-    $q->bindParam(8, $data['description']);
-    $q->bindParam(9, $data['avatar']);
-    $q->bindParam(10, $data['usergroup']);
-    $result = $q->execute();
+        $q->bindParam(1, $data['name']);
+        $q->bindParam(2, $data['surname']);
+        $q->bindParam(3, $data['middlename']);
+        $q->bindParam(4, $data['email']);
+        $q->bindParam(5, $pass);
+        $q->bindParam(6, $data['tel']);
+        $q->bindParam(7, $data['std_group']);
+        $q->bindParam(8, $data['description']);
+        $q->bindParam(9, $data['avatar']);
+        $q->bindParam(10, $data['usergroup']);
+        $result = $q->execute();
 
-    if ($result == true) {
-        logReg();
-        http_response_code(201);
-        echo json_encode(['message' => "true"]);
+        if ($result == true) {
+            logReg();
+            http_response_code(201);
+            echo json_encode(['message' => "true", 'ip' => $_SERVER['REMOTE_ADDR']]);
+        } else {
+            http_response_code(200);
+            echo json_encode(['message' => "false", 'ip' => $_SERVER['REMOTE_ADDR']]);
+        }
     } else {
-        http_response_code(200);
-        echo json_encode(['message' => "false"]);
+        http_response_code(401);
+        echo json_encode(["message" => "Authorization required"]);
     }
 } else {
     http_response_code(405);
@@ -37,7 +42,7 @@ function prepareData($array)
     foreach ($array as $key => $value) {
         if ($key == 'usergroup' && $value != 1 && $value != 2) {
             $data[$key] = '1';
-        } else $data[$key] = htmlspecialchars($value);
+        } else $data[$key] = htmlspecialchars(trim($value));
     }
     return $data;
 }

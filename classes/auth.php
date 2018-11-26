@@ -1,12 +1,13 @@
 <?php
-
 final class Auth
 {
     function verifyUser()
     {
-        if (isset($_POST['email']) && isset($_POST['pass'])) {
+        if ((iconv_strlen($_POST['email']) > 2) && (iconv_strlen($_POST['pass']) > 3)) {
+            $data = $this->prepareData($_POST);
+            $data['api_key'] = 'android';
             $check = curl_init('http://' . $_SERVER['HTTP_HOST'] . '/api/user/verify.php');
-            curl_setopt($check, CURLOPT_POSTFIELDS, $_POST);
+            curl_setopt($check, CURLOPT_POSTFIELDS, $data);
             curl_setopt($check, CURLOPT_RETURNTRANSFER, true);
             $response = json_decode(curl_exec($check), true);
             curl_close($check);
@@ -50,17 +51,17 @@ final class Auth
         </form>
         <br>
         <b>Авторизация через VK</b><br>
-        <a href=\'https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/callback.php&scope=email&response_type=code&v=5.92\'><img src=\'../assets/img/vk_icon.svg\' width=50 height=50 alt=\'\'></a>
+        <a href=\'https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/vk_auth.php&scope=email&response_type=code&v=5.92\'><img src=\'../assets/img/vk_icon.svg\' width=50 height=50 alt=\'\'></a>
         </div>';
     }
 
     function loginUser($email)
     {
-        $result = json_decode(file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?email=' . $email), true);
+        $result = json_decode(file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&email=' . $email), true);
         session_start();
+        $_SESSION['email'] = htmlspecialchars($email);
         $_SESSION['name'] = htmlspecialchars($result['name']);
         $_SESSION['surname'] = htmlspecialchars($result['surname']);
-        $_SESSION['email'] = htmlspecialchars($result['email']);
         $_SESSION['usergroup'] = $result['usergroup'];
         $_SESSION['avatar'] = $this->setAvatar($result['avatar']);
 
@@ -79,5 +80,14 @@ final class Auth
     function setAvatar($link)
     {
         return (iconv_strlen($link) < 4) ? 'assets/img/defaultAvatar.png' : $link;
+    }
+
+    function prepareData($array)
+    {
+        $data = [];
+        foreach ($array as $key => $value) {
+            $data[$key] = $value;
+        }
+        return $data;
     }
 }

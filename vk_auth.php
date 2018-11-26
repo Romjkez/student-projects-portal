@@ -2,7 +2,7 @@
 if (isset($_GET['code'])) {
     $clientId = '6716519';
     $clientSecret = 'CPK9OYPQAceSCyhluAbG';
-    $redirectUri = urlencode('http://new.std-247.ist.mospolytech.ru/callback.php');
+    $redirectUri = urlencode('http://new.std-247.ist.mospolytech.ru/vk_auth.php');
 
     $params = [
         'client_id' => $clientId,
@@ -43,7 +43,7 @@ if (isset($_GET['code'])) {
                 }
 
                 session_start();
-                $result = json_decode(file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?email=' . $email), true);
+                $result = json_decode(file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&email=' . $email), true);
                 $_SESSION['name'] = $result['name'];
                 $_SESSION['surname'] = $result['surname'];
                 $_SESSION['email'] = $result['email'];

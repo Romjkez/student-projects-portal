@@ -17,38 +17,38 @@ final class Reg
             <input value='" . $_GET['surname'] . "' type='text' name='surname' placeholder='Ваша фамилия' minlength='2' required maxlength='50'><br>
             <input type='text' name='middlename' placeholder='Ваше отчество' maxlength='50'><br>
             <input value='" . $_GET['email'] . "' type='email' name='email' placeholder='Ваш email' minlength='2' maxlength='100' required><br>
-            <input value='123123' type='password' name='pass' placeholder='Ваш пароль' minlength='6' required><br>
-            <input value='123123' type='password' name='pass_confirm' placeholder='Введите пароль ещё раз' minlength='6' required><br>
+            <input type='password' name='pass' placeholder='Ваш пароль' minlength='6' required><br>
+            <input type='password' name='pass_confirm' placeholder='Введите пароль ещё раз' minlength='6' required><br>
             <input type='tel' name='tel' placeholder='Ваш телефон'><br>
             <input type='text' name='std_group' maxlength='20' placeholder='Учебная группа'><br>
-            <input value='" . $_GET['avatar'] . "' type='text' name='avatar' maxlength='255' placeholder='Ссылка на любое ваше фото'><br>
-            <textarea placeholder='О себе' name='description'>Hey all</textarea><br>
+            <input value='" . $_GET['avatar'] . "' type='text' name='avatar' maxlength='255' placeholder='Ссылка на ваше фото'><br>
+            <textarea placeholder='О себе' name='description'></textarea><br>
             <button type='submit' name='submit'>Зарегистрироваться</button>
         </form>
         <div style='background:#eee;padding:5px;'>Для завершения регистрации, выберите вашу роль, отметив чекбокс в начале формы</div>
         <br>
         <b>Авторизация через VK</b><br>
-        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/callback.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/vk_auth.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
         </div>";
         } else echo "
         <div style='text-align: center'><form action='" . $_SERVER["REQUEST_URI"] . "' method='post'>
             <label for=''>Я исполнитель</label><input type='radio' name='usergroup' value='1' required><br>
             <label for=''>Я заказчик</label><input type='radio' name='usergroup' value='2'><br>
-            <input value='Никита' type='text' name='name' placeholder='Ваше имя' minlength='2' required autofocus maxlength='50'><br>
-            <input value='Игнатьев' type='text' name='surname' placeholder='Ваша фамилия' minlength='2' required maxlength='50'><br>
+            <input type='text' name='name' placeholder='Ваше имя' minlength='2' required autofocus maxlength='50'><br>
+            <input type='text' name='surname' placeholder='Ваша фамилия' minlength='2' required maxlength='50'><br>
             <input type='text' name='middlename' placeholder='Ваше отчество' maxlength='50'><br>
             <input type='email' name='email' placeholder='Ваш email' minlength='2' maxlength='100' required><br>
-            <input value='123123' type='password' name='pass' placeholder='Ваш пароль' minlength='6' required><br>
-            <input value='123123' type='password' name='pass_confirm' placeholder='Введите пароль ещё раз' minlength='6' required><br>
+            <input type='password' name='pass' placeholder='Ваш пароль' minlength='6' required><br>
+            <input type='password' name='pass_confirm' placeholder='Введите пароль ещё раз' minlength='6' required><br>
             <input type='tel' name='tel' placeholder='Ваш телефон'><br>
             <input type='text' name='std_group' maxlength='20' placeholder='Учебная группа'><br>
-            <input type='text' name='avatar' maxlength='255' placeholder='Ссылка на любое ваше фото'><br>
-            <textarea placeholder='О себе' name='description'>Hey all</textarea><br>
+            <input type='text' name='avatar' maxlength='255' placeholder='Ссылка на ваше фото'><br>
+            <textarea placeholder='О себе' name='description'></textarea><br>
             <button type='submit' name='submit'>Зарегистрироваться</button>
         </form>
         <br>
         <b>Авторизация через VK</b><br>
-        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/callback.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/vk_auth.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
         </div>";
     }
 
@@ -83,14 +83,14 @@ final class Reg
             echo 'Пользователь с таким email уже зарегистрирован.';
             return true;
         } else return false;
-
-
     }
 
     public function sendForm()
     {
+        $data = $this->prepareData($_POST);
+        $data['api_key'] = 'android';
         $ch = curl_init('http://' . $_SERVER['HTTP_HOST'] . '/api/user/add.php');
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $_POST);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $response = json_decode(curl_exec($ch), true);
         curl_close($ch);
@@ -100,10 +100,10 @@ final class Reg
     private function loginUser()
     {
         session_start();
-        $_SESSION['name'] = htmlspecialchars($_POST['name']);
-        $_SESSION['surname'] = htmlspecialchars($_POST['surname']);
+        $_SESSION['name'] = htmlspecialchars(trim($_POST['name']));
+        $_SESSION['surname'] = htmlspecialchars(trim($_POST['surname']));
         $_SESSION['email'] = htmlspecialchars($_POST['email']);
-        $_SESSION['usergroup'] = htmlspecialchars($_POST['usergroup']);
+        $_SESSION['usergroup'] = htmlspecialchars(trim($_POST['usergroup']));
         $_SESSION['avatar'] = $this->setAvatar();
         echo 'Регистрация прошла успешно! Перенаправляем на главную...
             <script>setTimeout(function(){window.location.href="/"},1500)</script>';
@@ -112,5 +112,14 @@ final class Reg
     private function setAvatar()
     {
         return (iconv_strlen($_POST['avatar']) < 4) ? 'assets/img/defaultAvatar.png' : $_POST['avatar'];
+    }
+
+    function prepareData($array)
+    {
+        $data = [];
+        foreach ($array as $key => $value) {
+            $data[$key] = $value;
+        }
+        return $data;
     }
 }

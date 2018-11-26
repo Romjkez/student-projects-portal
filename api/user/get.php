@@ -2,14 +2,18 @@
 // получение информации о пользователе по id, email, surname
 require_once '../../database.php';
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-
-    if (isset($_GET['id']) && is_numeric($_GET['id'])) {
-        echo getUserByID($_GET['id']);
-    } else if (isset($_GET['email'])) {
-        echo getUserByEmail($_GET['email']);
-    } else if (isset($_GET['surname'])) {
-        echo getUserBySurname($_GET['surname']);
-    } else echo json_encode(["message" => "Unknown GET parameter"]);
+    if (isset($_SESSION['email']) || $_GET['api_key'] == 'android') {
+        if (isset($_GET['id']) && is_numeric($_GET['id'])) {
+            echo getUserByID($_GET['id']);
+        } else if (isset($_GET['email'])) {
+            echo getUserByEmail($_GET['email']);
+        } else if (isset($_GET['surname'])) {
+            echo getUserBySurname($_GET['surname']);
+        } else echo json_encode(["message" => "Unknown GET parameter"]);
+    } else {
+        http_response_code(401);
+        echo json_encode(["message" => "Authorization required"]);
+    }
 } else {
     http_response_code(405);
     echo json_encode(["message" => "Method not supported"]);
