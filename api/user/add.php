@@ -58,5 +58,5 @@ function logReg()
         } else $newArr[$key] = 'NULL';
     }
     $newlog = "\n" . date('Y-m-d[H:i:s]') . ' | NAME:' . $newArr['name'] . ' | SURNAME:' . $newArr['surname'] . ' | MIDDLENAME:' . $newArr['middlename'] . ' | EMAIL:' . $newArr['email'] . ' | USERGROUP:' . $newArr['usergroup'];
-    file_put_contents('../../log/reg.txt', iconv('windows-1251', 'utf-8', $newlog), FILE_APPEND);
+    file_put_contents('../../log/reg.txt', $newlog, FILE_APPEND);
 }

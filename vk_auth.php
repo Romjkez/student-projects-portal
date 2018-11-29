@@ -1,4 +1,26 @@
 <?php
+
+
+final class vkAuth
+{
+    private const clientId = '6716519';
+    private const clientSecret = 'CPK9OYPQAceSCyhluAbG';
+    private const redirectUri = 'http://new.std-247.ist.mospolytech.ru/vk_auth.php';
+    private $params = [];
+
+    function __construct($clientId = '6716519', $clientSecret = 'CPK9OYPQAceSCyhluAbG', $redirectUri = 'http://new.std-247.ist.mospolytech.ru/vk_auth.php')
+    {
+        if (isset($_GET['code'])) {
+            $this->params = [
+                'client_id' => $clientId,
+                'client_secret' => $clientSecret,
+                'code' => $_GET['code'],
+                'redirect_uri' => $redirectUri
+            ];
+        }
+    }
+
+}
 if (isset($_GET['code'])) {
     $clientId = '6716519';
     $clientSecret = 'CPK9OYPQAceSCyhluAbG';
