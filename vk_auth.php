@@ -31,7 +31,7 @@ final class VkAuth
         } else if (isset($_GET['error'])) { // if VK has thrown an error, show it and redirect back
             echo('При авторизации произошла ошибка: ' . $_GET['error']
                 . '. Причина: ' . $_GET['error_reason'] . '. Описание: ' . $_GET['error_description']);
-            echo '<br><br><b>Возвращаем вас обратно...</b><script>setTimeout(function() {window.history.go(-2)},2000)</script>';
+            echo '<br><br><b>Возвращаем вас обратно...</b><script>setTimeout(function() {window.history.go(-2)},2500)</script>';
         }
     }
 
