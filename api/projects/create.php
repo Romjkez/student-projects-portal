@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($result == true) {
             http_response_code(201);
             echo json_encode(['message' => "true"]);
+            logCreation();
         } else {
             http_response_code(200);
             echo json_encode(['message' => "false"]);
@@ -26,4 +27,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
+}
+function logCreation()
+{
+    date_default_timezone_set("Europe/Moscow");
+    $newArr = [];
+    foreach ($_POST as $key => $value) {
+        if ($value != '') {
+            $newArr[$key] = $value;
+        } else $newArr[$key] = 'NULL';
+    }
+    $newlog = "\n" . 'CREATE:' . date('Y-m-d[H:i:s]') . ' | TITLE:' . $newArr['title'] . ' | DEADLINE:' . $newArr['deadline'] . ' | CURATOR:' . $newArr['curator'] . ' | TAGS:' . $newArr['tags'] . ' | STATUS: 0';
+    file_put_contents('../../log/projects.txt', $newlog, FILE_APPEND);
 }
