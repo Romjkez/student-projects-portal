@@ -23,10 +23,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($result == true) {
             logReg();
             http_response_code(201);
-            echo json_encode(['message' => "true", 'ip' => $_SERVER['REMOTE_ADDR']]);
+            echo json_encode(['message' => "true"]);
         } else {
             http_response_code(200);
-            echo json_encode(['message' => "false", 'ip' => $_SERVER['REMOTE_ADDR']]);
+            echo json_encode(['message' => "false"]);
         }
     } else {
         http_response_code(401);

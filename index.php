@@ -1,5 +1,5 @@
 <?php session_start();
-echo '<head><meta charset="utf-8"></head>';
+echo '<head><title>Портал подбора студенческих проектов</title><meta charset="utf-8"></head>';
 // тут запрос к API на обновление списка проектов
 if (isset($_SESSION['name']) && (isset($_SESSION['surname']) && isset($_SESSION['email']))) {
     require_once 'classes/auth.php';
@@ -20,6 +20,8 @@ if (isset($_SESSION['name']) && (isset($_SESSION['surname']) && isset($_SESSION[
 } else echo '<a href="login.php">Авторизуйтесь</a> или <a href="register.php">Зарегистрируйтесь</a><br><br>';
 
 
+/*$members= json_decode($res['members']);
+echo countPlaces($members);*/
 $j = json_encode(
     [
         ['Дизайнер' => 12, 'PHP-разработчик' => 1, 'Frontend-разработчик' => 0],

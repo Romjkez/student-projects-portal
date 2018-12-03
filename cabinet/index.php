@@ -45,7 +45,7 @@ class Cabinet
     }
 }
 
-class WorkerCabinet extends Cabinet
+final class WorkerCabinet extends Cabinet
 {
     function __construct()
     {
@@ -53,7 +53,7 @@ class WorkerCabinet extends Cabinet
     }
 }
 
-class CuratorCabinet extends Cabinet
+final class CuratorCabinet extends Cabinet
 {
     function __construct()
     {
@@ -68,12 +68,46 @@ class CuratorCabinet extends Cabinet
         } else $this->showDefaultContent();
     }
 
+    /**
+     * Prepares teams
+     * @param array $roles
+     * @param int $teams
+     * @return array
+     */
+    private function prepareMembers(array $roles, int $teams)
+    {
+        $members = [];
+        for ($i = 0; $i < $teams; $i++) {
+            $members[$i] = $this->generateTeamInstance($roles);
+        }
+        return $members;
+    }
+
+    /**
+     * Prepares members of a single team
+     * @param $roles
+     * @return array
+     */
+    private function generateTeamInstance($roles)
+    {
+        $team = [];
+        foreach ($roles as $role) {
+            $team[trim(htmlspecialchars($role))] = 0;
+        };
+        return $team;
+    }
+
     private function onSubmitForm()
     {
         if (isset($_POST['title']) && isset($_POST['description']) && isset($_POST['deadline']) && isset($_POST['tags']) && isset($_POST['roles']) && $_POST['teamsCount'] > 0 && $_POST['teamsCount'] < 6) {
-            echo strtotime($_POST['deadline']);
-            // todo доделать валидацию и отправку формы на апи
-
+            $title = trim(htmlspecialchars($_POST['title']));
+            $desc = trim(htmlspecialchars($_POST['description']));
+            $roles = explode(',', $_POST['roles'], 5);
+            $members = $this->prepareMembers($roles, (int)$_POST['teamsCount']);
+            $params = [
+                'title' => $title, 'description' => $desc, 'deadline' => $_POST['deadline'], 'tags' => json_encode($_POST['tags']), 'members' => json_encode($members)
+            ];
+            $this->addProject($params);
         } else echo 'Пожалуйста, заполните все поля.';
     }
 
@@ -89,7 +123,7 @@ class CuratorCabinet extends Cabinet
                     <label for="">Какие специалисты вам нужны? Перечислите через запятую</label><br>
                     <input type="text" name="roles" placeholder="Например: Frontend-разработчик, SMM-специалист)" style="width:350px;" required><br>
                     <input type="number" required name="teamsCount" placeholder="Количество команд" min="1" max="5" style="width:150px"><br>
-                    <label for="">Выберите теги необходимых компетенций, чтобы исполнителям было проще найти проект:</label><br>
+                    <label for="">Выберите теги необходимых компетенций(не более 5), чтобы исполнителям было проще найти проект:</label><br>
                     <select required name="tags[]" multiple style="min-height:150px">
                         <optgroup label="IT-компетенции">
                             <option value="Frontend">Frontend</option>
@@ -114,13 +148,24 @@ class CuratorCabinet extends Cabinet
         echo '<a href="?createproject">Создать проект</a>';
     }
 
-    private function addProject()
+    private function addProject($params)
     {
-
+        $result = json_decode(file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&email=' . $_SESSION['email']), true);
+        $params['curator'] = $result['id'];
+        $params['api_key'] = 'android';
+        $q = curl_init('http://' . $_SERVER['HTTP_HOST'] . '/api/projects/create.php');
+        curl_setopt($q, CURLOPT_POSTFIELDS, $params);
+        curl_setopt($q, CURLOPT_RETURNTRANSFER, true);
+        $response = json_decode(curl_exec($q), true);
+        curl_close($q);
+        if ($response['message'] === 'true') {
+            header('Location:/cabinet');
+        } else echo 'Упс! Что-то пошло не так при отправке запроса!<br>Перенаправляем в личный кабинет...
+            <script>setTimeout(function(){window.location.href="/cabinet"},2500)</script>';
     }
 }
 
-class AdminCabinet extends Cabinet
+final class AdminCabinet extends Cabinet
 {
     function __construct()
     {

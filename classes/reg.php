@@ -19,7 +19,7 @@ final class Reg
             <input value='" . $_GET['email'] . "' type='email' name='email' placeholder='Ваш email' minlength='2' maxlength='100' required><br>
             <input type='password' name='pass' placeholder='Ваш пароль' minlength='6' required><br>
             <input type='password' name='pass_confirm' placeholder='Введите пароль ещё раз' minlength='6' required><br>
-            <input type='tel' name='tel' placeholder='Ваш телефон'><br>
+            <input value='" . $_GET['phone'] . "' type='tel' name='tel' placeholder='Ваш телефон'><br>
             <input type='text' name='std_group' maxlength='20' placeholder='Учебная группа'><br>
             <input value='" . $_GET['avatar'] . "' type='text' name='avatar' maxlength='255' placeholder='Ссылка на ваше фото'><br>
             <textarea placeholder='О себе' name='description'></textarea><br>

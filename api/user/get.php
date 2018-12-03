@@ -22,7 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 function getUserByID($id)
 {
     $db = new Database();
-    $stmt = $db->connection->prepare("SELECT name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE id=?");
+    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE id=?");
     $stmt->bindParam(1, $id);
     $stmt->execute();
     $result = $stmt->fetchObject();
@@ -40,7 +40,7 @@ function getUserByID($id)
 function getUserBySurname($surname)
 {
     $db = new Database();
-    $stmt = $db->connection->prepare("SELECT name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE surname=?");
+    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE surname=?");
     $stmt->bindParam(1, $surname);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -58,7 +58,7 @@ function getUserBySurname($surname)
 function getUserByEmail($email)
 {
     $db = new Database();
-    $stmt = $db->connection->prepare("SELECT name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE email=?");
+    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE email=?");
     $stmt->bindParam(1, $email);
     $stmt->execute();
     $result = $stmt->fetchObject();
