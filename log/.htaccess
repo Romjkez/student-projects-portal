@@ -1,0 +1,7 @@
+AuthType Basic
+AuthName "Admin access only"
+AuthUserFile /home/std/new/log/.htpasswd
+Require valid-user
+<Files .htpasswd>
+   deny from all
+</Files>
