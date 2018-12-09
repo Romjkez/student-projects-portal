@@ -5,6 +5,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_SESSION['email']) || $_GET['api_key'] == 'android') {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             echo getUserByID($_GET['id']);
+        } else if (isset($_GET['id']) && is_array($_GET['id'])) {
+            echo getUsersById($_GET['id']);
         } else if (isset($_GET['email'])) {
             echo getUserByEmail($_GET['email']);
         } else if (isset($_GET['surname'])) {
@@ -19,12 +21,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     echo json_encode(["message" => "Method not supported"]);
 }
 
+function getUsersById($ids)
+{
+    //todo добавить ограничение на кол-во получаемых пользователей
+    $db = new Database();
+    $resp = [];
+    $q = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE id=:id");
+    foreach ($ids as $key => $value) {
+        $q->execute([':id' => (integer)$ids[$key]]);
+        $rows = $q->rowCount();
+        if ($rows === 0) $resp[] = null;
+        else $resp[] = $q->fetchObject();
+    }
+    http_response_code(200);
+    return json_encode($resp);
+}
+
 function getUserByID($id)
 {
     $db = new Database();
-    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE id=?");
-    $stmt->bindParam(1, $id);
-    $stmt->execute();
+    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE id=:id");
+    $stmt->execute([':id' => $id]);
     $result = $stmt->fetchObject();
     $db->disconnect();
     if (empty($result)) {
