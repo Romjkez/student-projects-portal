@@ -3,7 +3,8 @@ printHeader();
 if (isset($_GET['id'])) {
     $project = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/projects/get.php?id=' . $_GET['id']));
     if (isset($project->message)) {
-        echo 'ERROR: ' . $project->message;
+        http_response_code(404);
+        echo 'Ошибка: ' . $project->message;
     } else {
         $curator = json_decode(file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&id=' . $project->curator), true); // object with project curator
         $deadline = date('d.m.Y', strtotime($project->deadline));
@@ -31,17 +32,21 @@ function prepareTags(array $tags)
     }
     return $str;
 }
-
 function prepareMembers(array $members)
 {
+    // todo повысить производительность или сделать асинхронной через js
     $str = '';
     for ($i = 0; $i < count($members); $i++) {
         $str = $str . '<br><u>Команда №' . $i . '</u><br>';
         foreach ($members[$i] as $key => $value) {
             if ($value == 0) {
                 $str .= $key . ': <b style="color:#0c8050;">свободно</b><br>';
-            } else
-                $str .= $key . ':' . $value . '<br>'; //todo нужно записать имя фамилию вместо id
+            } else {
+                $member = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&id=' . $value), true);
+                if (!isset($member['message'])) {
+                    $str .= $key . ': ' . '<a href="/user?id=' . $value . '">' . $member['name'] . ' ' . $member['surname'] . '</a><br>';
+                } else $str .= '<b>ERROR</b><br>';
+            }
         }
     }
     return $str;

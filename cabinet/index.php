@@ -102,7 +102,7 @@ final class CuratorCabinet extends Cabinet
         if (isset($_POST['title']) && isset($_POST['description']) && isset($_POST['deadline']) && isset($_POST['tags']) && isset($_POST['roles']) && $_POST['teamsCount'] > 0 && $_POST['teamsCount'] < 6) {
             $title = trim(htmlspecialchars($_POST['title']));
             $desc = trim(htmlspecialchars($_POST['description']));
-            $roles = explode(',', $_POST['roles'], 5);
+            $roles = array_slice(explode(',', $_POST['roles'], 11), 0, 10); // makes and array of roles and saves first 10 roles
             $members = $this->prepareMembers($roles, (int)$_POST['teamsCount']);
             $params = [
                 'title' => $title, 'description' => $desc, 'deadline' => $_POST['deadline'], 'tags' => json_encode($_POST['tags']), 'members' => json_encode($members)
@@ -120,10 +120,10 @@ final class CuratorCabinet extends Cabinet
                     <input name="title" type="text" placeholder="Название вашего проекта" maxlength="255" autofocus required><br>
                     <textarea name="description" placeholder="Описание вашего проекта" required cols="50" rows="5" style="resize:none;"></textarea><br>
                     <label for="">Крайняя дата записи на проект: </label><input type="date" name="deadline" min="' . $today . '" max="' . $maxDeadline . '" required><br><br>  
-                    <label for="">Какие специалисты вам нужны? Перечислите через запятую</label><br>
+                    <label for="">Какие специалисты вам нужны? Перечислите через запятую не более 10 специальностей</label><br>
                     <input type="text" name="roles" placeholder="Например: Frontend-разработчик, SMM-специалист)" style="width:350px;" required><br>
                     <input type="number" required name="teamsCount" placeholder="Количество команд" min="1" max="5" style="width:150px"><br>
-                    <label for="">Выберите теги необходимых компетенций(не более 5), чтобы исполнителям было проще найти проект:</label><br>
+                    <label for="">Выберите теги необходимых компетенций, чтобы исполнителям было проще найти проект:</label><br>
                     <select required name="tags[]" multiple style="min-height:150px">
                         <optgroup label="IT-компетенции">
                             <option value="Frontend">Frontend</option>
