@@ -2,13 +2,19 @@
 
 final class Reg
 {
+    private $oauth_vk_link;
+    private $oauth_yandex_link;
+
     function __construct()
     {
+        $this->printHeader();
+        $this->oauth_yandex_link = 'https://oauth.yandex.ru/authorize?response_type=code&client_id=9720b31b284b4caf812835ac8e672eb3&redirect_uri=http://new.std-247.ist.mospolytech.ru/oauth/yandex_auth.php';
+        $this->oauth_vk_link = 'https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/oauth/vk_auth.php&scope=email&response_type=code&v=5.92';
     }
 
     public function outputForm()
     {
-        if (isset($_GET['email']) && isset($_GET['name']) && isset($_GET['surname']) && isset($_GET['avatar'])) {
+        if (isset($_GET['email']) && isset($_GET['name']) && isset($_GET['surname'])) {
             echo "<div style='text-align: center'>
         <form action='" . $_SERVER["REQUEST_URI"] . "' method='post'>
             <div style='border:1px solid orange;width:fit-content;margin:0 auto'><label for=''>Я исполнитель</label><input type='radio' name='usergroup' value='1' required><br>
@@ -27,8 +33,9 @@ final class Reg
         </form>
         <div style='background:#eee;padding:5px;'>Для завершения регистрации, выберите вашу роль, отметив чекбокс в начале формы</div>
         <br>
-        <b>Авторизация через VK</b><br>
-        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/vk_auth.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <b>Авторизация через VK/Яндекс</b><br>
+        <a href='" . $this->oauth_vk_link . "'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <a href=\"" . $this->oauth_yandex_link . "\"><img src=\"../assets/img/yandex_icon.svg\" width=\"50\" height=\"50\" alt=\"\"></a>
         </div>";
         } else echo "
         <div style='text-align: center'><form action='" . $_SERVER["REQUEST_URI"] . "' method='post'>
@@ -47,8 +54,9 @@ final class Reg
             <button type='submit' name='submit'>Зарегистрироваться</button>
         </form>
         <br>
-        <b>Авторизация через VK</b><br>
-        <a href='https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/vk_auth.php&scope=email&response_type=code&v=5.92'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <b>Авторизация через VK/Яндекс</b><br>
+        <a href='" . $this->oauth_vk_link . "'><img src='../assets/img/vk_icon.svg' width=50 height=50 alt=''></a>
+        <a href=\"" . $this->oauth_yandex_link . "\"><img src=\"../assets/img/yandex_icon.svg\" width=\"50\" height=\"50\" alt=\"\"></a>
         </div>";
     }
 
@@ -121,5 +129,13 @@ final class Reg
             $data[$key] = $value;
         }
         return $data;
+    }
+
+    private function printHeader()
+    {
+        echo '<head>
+                    <title>Регистрация</title>
+                    <meta charset="UTF-8">
+              </head>';
     }
 }

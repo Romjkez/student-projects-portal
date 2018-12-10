@@ -1,6 +1,17 @@
 <?php
+
 final class Auth
 {
+    private $oauth_vk_link;
+    private $oauth_yandex_link;
+
+    function __construct()
+    {
+        $this->printHeader();
+        $this->oauth_yandex_link = 'https://oauth.yandex.ru/authorize?response_type=code&client_id=9720b31b284b4caf812835ac8e672eb3&redirect_uri=http://new.std-247.ist.mospolytech.ru/oauth/yandex_auth.php';
+        $this->oauth_vk_link = 'https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/oauth/vk_auth.php&scope=email&response_type=code&v=5.92';
+    }
+
     function verifyUser()
     {
         if ((iconv_strlen($_POST['email']) > 2) && (iconv_strlen($_POST['pass']) > 3)) {
@@ -50,8 +61,9 @@ final class Auth
             <button name="submit" type="submit">Войти</button>
         </form>
         <br>
-        <b>Авторизация через VK</b><br>
-        <a href=\'https://oauth.vk.com/authorize?client_id=6716519&display=page&redirect_uri=http://new.std-247.ist.mospolytech.ru/vk_auth.php&scope=email&response_type=code&v=5.92\'><img src=\'../assets/img/vk_icon.svg\' width=50 height=50 alt=\'\'></a>
+        <b>Авторизация через VK/Яндекс</b><br>
+        <a href=\'' . $this->oauth_vk_link . '\'><img src=\'../assets/img/vk_icon.svg\' width="50" height="50" alt=\'\'></a>
+        <a href="' . $this->oauth_yandex_link . '"><img src="../assets/img/yandex_icon.svg" width="50" height="50" alt=""></a>
         </div>';
     }
 
@@ -89,5 +101,13 @@ final class Auth
             $data[$key] = $value;
         }
         return $data;
+    }
+
+    private function printHeader()
+    {
+        echo '<head>
+                    <title>Авторизация</title>
+                    <meta charset="UTF-8">
+              </head>';
     }
 }

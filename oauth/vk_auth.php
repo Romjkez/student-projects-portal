@@ -1,7 +1,7 @@
 <?php
 $clientId = '6716519';
 $clientSecret = 'CPK9OYPQAceSCyhluAbG';
-$redirectUri = 'http://new.std-247.ist.mospolytech.ru/vk_auth.php';
+$redirectUri = 'http://new.std-247.ist.mospolytech.ru/oauth/vk_auth.php';
 $auth = new VkAuth($clientId, $clientSecret, $redirectUri);
 
 final class VkAuth
@@ -86,7 +86,7 @@ final class VkAuth
         $name = ($res->response[0]->first_name);
         $surname = ($res->response[0]->last_name);
         $phone = urlencode($res->response[0]->mobile_phone);
-        header('Location: register.php?email=' . $this->data['email'] . '&name=' . $name . '&surname=' . $surname . '&avatar=' . $avatar . '&phone=' . $phone);
+        header('Location: /register.php?email=' . $this->data['email'] . '&name=' . $name . '&surname=' . $surname . '&avatar=' . $avatar . '&phone=' . $phone);
     }
 
     /**
