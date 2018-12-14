@@ -15,14 +15,19 @@ if (isset($_GET['id'])) {
         echo 'Название: ' . $project->title . '<br>';
         echo 'Описание: ' . $project->description . '<br>';
         echo 'Запись до: ' . $deadline . '<br>';
-        if ($project->status == 0) echo 'Статус: <b style="color:#d18d00">на рассмотрении администрации</b> <br>';
-        else if ($project->status == 1) echo 'Статус: <b style="color:#0c8050;">открыто</b><br>';
-        else if ($project->status == 2) echo 'Статус: <b style="color:#ff4d54">закрыто</b><br>';
+        echo 'Статус: ' . printProjectStatus($project->status);
         echo 'Куратор: <a href="/user?id=' . $project->curator . '">' . $curator['name'] . ' ' . $curator['surname'] . '</a><br>';
         echo 'Теги: ' . $tags . '<br>';
         echo 'Заполненность: ' . countPlaces(json_decode($project->members)) . '<br>';
         echo 'Участники:<br>' . $membersStr;
     }
+}
+function printProjectStatus($status)
+{
+    if ($status == 0) return '<b style="color:#d18d00">на рассмотрении администрации</b> <br>';
+    else if ($status == 1) return '<b style="color:#0c8050;">открыто</b><br>';
+    else if ($status == 2) return '<b style="color:#ff4d54">закрыто</b><br>';
+    else if ($status == 3) return '<b style="color:#676767">не прошёл модерацию</b><br>';
 }
 function prepareTags(array $tags)
 {
@@ -45,7 +50,7 @@ function prepareMembers(array $members)
                 $member = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&id=' . $value), true);
                 if (!isset($member['message'])) {
                     $str .= $key . ': ' . '<a href="/user?id=' . $value . '">' . $member['name'] . ' ' . $member['surname'] . '</a><br>';
-                } else $str .= '<b>ERROR</b><br>';
+                } else $str .= $key . ': <i>пользователь не найден</i><br>';
             }
         }
     }

@@ -48,5 +48,5 @@ function setUserGroup($groupId)
 
 function setUserPhone($phone)
 {
-    return (iconv_strlen($phone) < 5) ? '<i>информация отсутствует</i>' : $phone;
+    return (iconv_strlen($phone) < 5) ? '<i>отсутствует</i>' : $phone;
 }
