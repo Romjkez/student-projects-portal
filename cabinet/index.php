@@ -1,5 +1,5 @@
 <?php session_start();
-if (!isset($_SESSION['email'])) header('Location: login.php'); // если отсутствует авторизация, переадресуем на авторизацию
+if (!isset($_SESSION['email'])) header('Location: /login.php'); // если отсутствует авторизация, переадресуем на авторизацию
 $userCabinet = defineUser(); // определяет группу пользователя
 function defineUser()
 {

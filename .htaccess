@@ -1,1 +1,5 @@
 Options -Indexes
+ErrorDocument 404 /404.php
+RewriteEngine On
+RewriteCond %{THE_REQUEST} ^[A-Z]{3,9}\ /index\.php\ HTTP/
+RewriteRule ^index\.php$ http://new.std-247.ist.mospolytech.ru [R=301,L]

@@ -14,11 +14,12 @@ final class Reg
 
     public function outputForm()
     {
+        echo '<div style="text-align: center"><h1>Регистрация</h1><p>В будущем форма регистрации будет различаться у заказчиков и исполнителей</p></div>';
         if (isset($_GET['email']) && isset($_GET['name']) && isset($_GET['surname'])) {
             echo "<div style='text-align: center'>
         <form action='" . $_SERVER["REQUEST_URI"] . "' method='post'>
             <div style='border:1px solid orange;width:fit-content;margin:0 auto'><label for=''>Я исполнитель</label><input type='radio' name='usergroup' value='1' required><br>
-            <label for=''>Я заказчик</label><input type='radio' name='usergroup' value='2'></div><br>
+            <label for=''>Я заказчик</label><input id='usergroupselector' type='radio' name='usergroup' value='2'></div><br>
             <input value='" . $_GET['name'] . "' type='text' name='name' placeholder='Ваше имя' minlength='2' required autofocus maxlength='50'><br>
             <input value='" . $_GET['surname'] . "' type='text' name='surname' placeholder='Ваша фамилия' minlength='2' required maxlength='50'><br>
             <input type='text' name='middlename' placeholder='Ваше отчество' maxlength='50'><br>
@@ -136,6 +137,8 @@ final class Reg
         echo '<head>
                     <title>Регистрация</title>
                     <meta charset="UTF-8">
-              </head>';
+                    <style>body{font-family: Arial,Helvetica,sans-serif }</style>
+              </head>
+            ';
     }
 }
