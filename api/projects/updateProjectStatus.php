@@ -1,11 +1,11 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['api_key'] == 'android' || $_SESSION['usergroup'] == 3) {
-        if (is_numeric($_POST['projectId']) && is_numeric($_POST['status']) && isset($_POST['adm_comment'])) {
+        if (is_numeric($_POST['id']) && is_numeric($_POST['status']) && isset($_POST['adm_comment'])) {
             require_once '../../database.php';
             $db = new Database();
             $q = $db->connection->prepare("SELECT * FROM `projects` WHERE `id` = :id");
-            $q->execute([':id' => $_POST['projectId']]);
+            $q->execute([':id' => $_POST['id']]);
             $res = $q->fetchObject();
             if ($res->status == $_POST['status']) {
                 http_response_code(200);
@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q = $db->connection->prepare("UPDATE `projects` SET `status` = ?, `adm_comment` = ? WHERE `projects`.`id` = ?;");
                 $q->bindParam(1, $_POST['status']);
                 $q->bindParam(2, $_POST['adm_comment']);
-                $q->bindParam(3, $_POST['projectId']);
+                $q->bindParam(3, $_POST['id']);
                 $result = $q->execute();
                 if (!$result) {
                     http_response_code(200);

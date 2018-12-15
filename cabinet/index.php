@@ -67,7 +67,7 @@ class Cabinet
     {
         $description = substr($project->description, 0, 250) . '...'; // short description - first 250 symbols of full description
         $members = json_decode($project->members, true);
-        $tags = $this->showProjectTags(json_decode($project->tags));
+        $tags = $this->showProjectTags($project->tags);
         $curator = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&id=' . $project->curator));
         echo '<div class="projectWrapper"><a href="/project?id=' . $project->id . '" class="projectSnippet">';
         echo '<strong>' . $project->title . '</strong>';
@@ -76,18 +76,6 @@ class Cabinet
         echo '<b>Куратор:</b> ' . $curator->name . ' ' . $curator->surname;
         echo $tags;
         echo '</a>';
-        // administrative block that will not be shown for other users while displaying a snippet
-        echo '<form class="commentForm" style="margin:1% 0 0 0;background:#eee;position:relative;z-index:2;" action="" method="post">
-                <input type="hidden" name="projectId" value="' . $project->id . '">
-                <label>Одобрить проект</label>
-                <input type="radio" name="status" value="1" onclick="toggleCommentForm(event)"><br>
-                <label>Отказать в публикации</label>
-                <input type="radio" name="status" value="3" onclick="toggleCommentForm(event)"><br>
-                <div class="commentArea" style="display:none;">
-                    <label>Причина отказа в публикации:</label><br>
-                    <textarea name="adm_comment" placeholder="Не более 255 символов" minlength="2" maxlength="255"></textarea>
-                </div><button class="commentFormSubmit" type="submit" name="submit">Подтвердить</button>
-              </form></div>';
     }
 
     function countPlaces($decoded)
@@ -106,8 +94,9 @@ class Cabinet
         return $c . '/' . $places;
     }
 
-    function showProjectTags($tags)
+    function showProjectTags(string $tagsStr)
     {
+        $tags = explode(',', $tagsStr);
         $result = '<div style="display:flex;justify-content: space-around">';
         for ($i = 0; $i < count($tags); $i++) {
             $result .= '<div style="background:#eee;">' . $tags[$i] . '</div>';
@@ -176,7 +165,7 @@ final class CuratorCabinet extends Cabinet
             $roles = array_slice(explode(',', $_POST['roles'], 11), 0, 10); // makes and array of roles and saves first 10 roles
             $members = $this->prepareMembers($roles, (int)$_POST['teamsCount']);
             $params = [
-                'title' => $title, 'description' => $desc, 'deadline' => $_POST['deadline'], 'tags' => json_encode($_POST['tags']), 'members' => json_encode($members)
+                'title' => $title, 'description' => $desc, 'deadline' => $_POST['deadline'], 'tags' => implode(',', $_POST['tags']), 'members' => json_encode($members)
             ];
             $this->addProject($params);
         } else echo 'Пожалуйста, заполните все поля.';
@@ -268,13 +257,33 @@ final class AdminCabinet extends Cabinet
         $this->printScripts();
     }
 
+    function showProject($project)
+    {
+        parent::showProject($project);
+        // administrative block that will not be shown for other users while displaying a snippet
+        echo '<form class="commentForm" style="margin:1% 0 0 0;background:#eee;position:relative;z-index:2;" action="" method="post">
+                <input type="hidden" name="id" value="' . $project->id . '">
+                <label>Одобрить проект</label>
+                <input type="radio" name="status" value="1" onclick="toggleCommentForm(event)"><br>
+                <label>Отказать в публикации</label>
+                <input type="radio" name="status" value="3" onclick="toggleCommentForm(event)"><br>
+                <div class="commentArea" style="display:none;">
+                    <label>Причина отказа в публикации:</label><br>
+                    <textarea name="adm_comment" placeholder="Не более 255 символов" minlength="2" maxlength="255"></textarea>
+                </div><button class="commentFormSubmit" type="submit" name="submit">Подтвердить</button>
+              </form></div>';
+    }
+
     function showNewProjects()
     {
         echo '<h2 style="text-align: center">Проекты, ожидающие модерации</h2>';
         $projects = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/projects/get.php?status=0'));
-        foreach ($projects as $project) {
-            $this->showProject($project);
-        }
+        if ($projects->message == 'No projects found') {
+            echo '<div style="text-align: center;"><i>Все проекты промодерированы!</i></div>';
+        } else
+            foreach ($projects as $project) {
+                $this->showProject($project);
+            }
     }
 
     function printScripts()

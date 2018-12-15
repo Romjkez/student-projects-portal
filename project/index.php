@@ -9,7 +9,7 @@ if (isset($_GET['id'])) {
         $curator = json_decode(file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/user/get.php?api_key=android&id=' . $project->curator), true); // object with project curator
         $deadline = date('d.m.Y', strtotime($project->deadline));
         $membersStr = prepareMembers(json_decode($project->members, true));
-        $tags = prepareTags(json_decode($project->tags, true));
+        $tags = prepareTags($project->tags);
 
         echo 'Проект #' . $project->id . '<br>';
         echo 'Название: ' . $project->title . '<br>';
@@ -28,9 +28,12 @@ function printProjectStatus($status)
     else if ($status == 1) return '<b style="color:#0c8050;">открыто</b><br>';
     else if ($status == 2) return '<b style="color:#ff4d54">закрыто</b><br>';
     else if ($status == 3) return '<b style="color:#676767">не прошёл модерацию</b><br>';
+    return 'неизвестно';
 }
-function prepareTags(array $tags)
+
+function prepareTags(string $tagsStr)
 {
+    $tags = explode(',', $tagsStr);
     $str = '';
     foreach ($tags as $tag) {
         $str .= '<span style="border:1px solid black;background:#eee;">' . $tag . '</span>';
