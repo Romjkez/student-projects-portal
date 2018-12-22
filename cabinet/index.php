@@ -48,7 +48,7 @@ class Cabinet
             .projectWrapper{
             border:1px solid #000;
             width:50%;
-            margin:1% auto;
+            margin:1% auto 0 auto;
             }
             .projectSnippet{
             display: block;
@@ -81,7 +81,11 @@ class Cabinet
         echo '<b>Занято: </b>' . $this->countPlaces($members) . '<br>';
         echo '<b>Куратор:</b> ' . $curator->name . ' ' . $curator->surname;
         echo $tags;
-        if (!empty($project['adm_comment'])) echo '<div style="background: #ff4d54;color:#fff">Отказ в публикации. Комментарий администратора: <b>' . $project['adm_comment'] . '</b></div>';
+        // for curators
+        if (!empty($project['adm_comment'])) {
+            echo '<div style="background: #ff4d54;color:#fff">Отказ в публикации. Комментарий администратора: <b>' . $project['adm_comment'] . '</b></div>';
+            echo '<div><form action="" method="post"><a style="border:1px solid black;background:#eee;text-decoration: none;color:#000" href="/project?id=' . $project['id'] . '&edit">Редактировать</a><button disabled>Отправить снова</button><button disabled>Удалить проект</button></form></div>';
+        }
         echo '</a></div>';
     }
 
@@ -93,6 +97,7 @@ class Cabinet
         else if ($status == 3) return '<b style="color:#676767">Не прошёл модерацию</b><br>';
         return 'неизвестно';
     }
+
     function countPlaces($decoded)
     {
         $c = 0;

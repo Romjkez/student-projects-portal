@@ -49,8 +49,8 @@ final class AdminCabinet extends Cabinet
     {
         parent::showProject($project);
         // administrative block that will not be shown for other users while displaying a snippet
-        echo '<form class="commentForm" style="margin:1% 0 0 0;background:#eee;position:relative;z-index:2;" action="" method="post">
-                <input type="hidden" name="id" value="' . $project->id . '">
+        echo '<form style="width:50%;margin:0 auto;background:#eee;position:relative;z-index:2; border:1px solid black;border-top:none;" action="" method="post">
+                <input type="hidden" name="id" value="' . $project['id'] . '">
                 <label>Одобрить проект</label>
                 <input type="radio" name="status" value="1" onclick="toggleCommentForm(event)"><br>
                 <label>Отказать в публикации</label>

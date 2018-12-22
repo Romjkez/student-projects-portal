@@ -111,14 +111,23 @@ final class CuratorCabinet extends Cabinet
     {
         echo '<a href="?createproject">Создать проект</a>';
         $this->showUnmoderredProjects();
-        /*$this->showVerifiedProjects();*/
+        $this->showVerifiedProjects();
+
     }
 
-    /*private function showVerifiedProject()
+    private function showVerifiedProjects()
     {
         echo '<h2 style="text-align: center">Мои проекты</h2>';
-        $newProjects = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/projects/get.php?status=0&curator=' . $_SESSION['email']), true);
-    }*/
+        $openedProjects = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/projects/get.php?status=1&curator=' . $_SESSION['email']), true);
+        $closedProjects = json_decode(@file_get_contents('http://' . $_SERVER['HTTP_HOST'] . '/api/projects/get.php?status=2&curator=' . $_SESSION['email']), true);
+        if (isset($openedProjects['message']) && isset($closedProjects['message'])) {
+            echo '<div style="text-align: center"><b>У вас пока нет проектов, прошедших модерацию.</b></div>';
+        } else {
+            $allProjects = array_merge($openedProjects, $closedProjects);
+            foreach ($allProjects as $project)
+                $this->showProject($project);
+        }
+    }
 
     private function showUnmoderredProjects()
     {
