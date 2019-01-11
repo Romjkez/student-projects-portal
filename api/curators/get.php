@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ((isset($_SESSION['email']) || $_GET['api_key'] == 'android')) {
         require_once '../../database.php';
         $db = new Database();
-        $stmt = $db->connection->prepare("SELECT name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE usergroup=2");
+        $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE usergroup=2");
         $stmt->execute();
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
