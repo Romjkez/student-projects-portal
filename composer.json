@@ -1,0 +1,20 @@
+{
+  "name": "vendor_name/package_name",
+  "description": "description_text",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Romjkez",
+      "email": "romka0233@yandex.ru"
+    }
+  ],
+  "require": {
+    "firebase/php-jwt": "^5.0",
+    "ext-json": "*",
+    "ext-curl": "*",
+    "ext-iconv": "*",
+    "ext-pdo": "*",
+    "ext-apache": "*"
+  }
+}

@@ -3,15 +3,15 @@
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['id'])) {
         getProjectById();
-    } else if (isset($_GET['status']) && !isset($_GET['curator'])) {
+    } else if (isset($_GET['status']) && !isset($_GET['curator']) && ($_GET['page']) >= 0 && $_GET['per_page'] > 0) {
         getProjectsByStatus();
-    } else if (isset($_GET['curator']) && !isset($_GET['status'])) {
+    } else if (isset($_GET['curator']) && !isset($_GET['status']) && ($_GET['page']) >= 0 && $_GET['per_page'] > 0) {
         getProjectsByCurator();
-    } else if (isset($_GET['curator']) && isset($_GET['status'])) {
+    } else if (isset($_GET['curator']) && isset($_GET['status']) && ($_GET['page']) >= 0 && $_GET['per_page'] > 0) {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
     } else {
         http_response_code(200);
-        echo json_encode(['message' => 'GET parameter is not specified']);
+        echo json_encode(['message' => 'No valid GET parameters found']);
     }
 
 } else {
@@ -41,8 +41,10 @@ function getProjectsByStatus()
     $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
     require_once '../../database.php';
     $db = new Database();
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE status=?");
-    $q->bindParam(1, $status);
+    $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status LIMIT :per_page OFFSET :page");
+    $q->bindParam(':status', $status);
+    $q->bindValue(':per_page', (int)($_GET['per_page']), PDO::PARAM_INT);
+    $q->bindValue(':page', (int)($_GET['page']) * (int)($_GET['per_page']), PDO::PARAM_INT);
     $q->execute();
     if ($q->rowCount() > 0) {
         $res = $q->fetchAll(PDO::FETCH_ASSOC);
@@ -82,8 +84,10 @@ function getProjectByCuratorId($curatorId)
 { // curator must be numeric(id)
     require_once '../../database.php';
     $db = new Database();
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=?");
-    $q->bindParam(1, $curatorId);
+    $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator LIMIT :per_page OFFSET :page");
+    $q->bindParam(':curator', $curatorId);
+    $q->bindValue(':per_page', (int)($_GET['per_page']), PDO::PARAM_INT);
+    $q->bindValue(':page', (int)($_GET['page']) * (int)($_GET['per_page']), PDO::PARAM_INT);
     $q->execute();
     if ($q->rowCount() > 0) {
         $res = $q->fetchAll(PDO::FETCH_ASSOC);
@@ -100,10 +104,12 @@ function getProjectByCuratorAndStatus($curator, $status)
     $status = (int)preg_replace('/[^0-9]/', '', $status); // =0 if GET[status] does not contain numbers
     require_once '../../database.php';
     $db = new Database();
-    if (is_numeric($_GET['curator'])) {
-        $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=? AND status=?");
-        $q->bindParam(1, $curator);
-        $q->bindParam(2, $status);
+    if (is_numeric($curator)) {
+        $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=:status LIMIT :per_page OFFSET :page");
+        $q->bindParam(':curator', $curator);
+        $q->bindParam(':status', $status);
+        $q->bindValue(':per_page', (int)($_GET['per_page']), PDO::PARAM_INT);
+        $q->bindValue(':page', (int)($_GET['page']) * (int)($_GET['per_page']), PDO::PARAM_INT);
         $q->execute();
         if ($q->rowCount() > 0) {
             $res = $q->fetchAll(PDO::FETCH_ASSOC);
@@ -120,9 +126,11 @@ function getProjectByCuratorAndStatus($curator, $status)
         if ($q->rowCount() > 0) {
             $res = $q->fetchObject();
             $curatorId = $res->id;
-            $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=? AND status=?");
-            $q->bindParam(1, $curatorId);
-            $q->bindParam(2, $status);
+            $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=:status LIMIT :per_page OFFSET :page");
+            $q->bindParam(':curator', $curatorId);
+            $q->bindParam(':status', $status);
+            $q->bindValue(':per_page', (int)($_GET['per_page']), PDO::PARAM_INT);
+            $q->bindValue(':page', (int)($_GET['page']) * (int)($_GET['per_page']), PDO::PARAM_INT);
             $q->execute();
             if ($q->rowCount() > 0) {
                 $res = $q->fetchAll(PDO::FETCH_ASSOC);
@@ -137,5 +145,4 @@ function getProjectByCuratorAndStatus($curator, $status)
             echo json_encode(['message' => 'No projects found']);
         }
     }
-
 }
