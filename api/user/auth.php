@@ -2,6 +2,7 @@
 header('Access-Control-Allow-Origin: *'); // allow cross-origin queries
 header('Access-Control-Allow-Methods: POST, OPTIONS');
 header('Access-Control-Expose-Headers: X-Auth-Token');
+header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
 
 require_once('../../vendor/autoload.php');
 
@@ -76,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 } else if ($_SERVER['REQUEST_METHOD'] == 'OPTIONS') {
     header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
+    header('Access-Control-Allow-Origin: *');
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
