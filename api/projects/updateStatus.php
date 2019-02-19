@@ -1,4 +1,6 @@
 <?php
+require_once '../headers.php';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_SESSION['email']) || $_POST['api_key'] == 'android') {
         require_once '../../database.php';

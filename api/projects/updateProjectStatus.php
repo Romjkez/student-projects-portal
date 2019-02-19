@@ -1,4 +1,6 @@
 <?php
+require_once '../headers.php';
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['api_key'] == 'android' || $_SESSION['usergroup'] == 3) {
         if (is_numeric($_POST['id']) && is_numeric($_POST['status']) && isset($_POST['adm_comment'])) {

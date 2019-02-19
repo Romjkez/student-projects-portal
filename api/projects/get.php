@@ -1,5 +1,7 @@
 <?php
-// get project by id,status or curator
+require_once '../headers.php';
+// get project by id,
+// status or curator
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['id'])) {
         getProjectById();

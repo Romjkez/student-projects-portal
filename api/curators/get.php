@@ -1,4 +1,6 @@
 <?php
+require_once '../headers.php';
+
 // получение всех заказчиков(кураторов)
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if ((isset($_SESSION['email']) || $_GET['api_key'] == 'android')) {

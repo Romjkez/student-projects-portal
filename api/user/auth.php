@@ -1,8 +1,6 @@
 <?php
-header('Access-Control-Allow-Origin: *'); // allow cross-origin queries
-header('Access-Control-Allow-Methods: POST, OPTIONS');
-header('Access-Control-Expose-Headers: X-Auth-Token');
-header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
+require_once '../headers.php';
+
 
 require_once('../../vendor/autoload.php');
 
