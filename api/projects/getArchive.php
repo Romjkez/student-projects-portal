@@ -25,7 +25,7 @@ function getProjectById()
     $id = (int)preg_replace('/[^0-9]/', '', $_GET['id']); // =0 if GET[id] does not contain numbers
     require_once '../../database.php';
     $db = new Database();
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE id=?");
+    $q = $db->connection->prepare("SELECT * FROM projects_archieve WHERE id=?");
     $q->bindParam(1, $id);
     $q->execute();
     if ($q->rowCount() > 0) {
@@ -43,14 +43,14 @@ function getProjectsByStatus()
     $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
     require_once '../../database.php';
     $db = new Database();
-    $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status');
+    $infoQuery = $db->connection->prepare('SELECT * FROM projects_archieve WHERE status=:status');
     $infoQuery->bindParam(':status', $status);
     $infoQuery->execute();
     $rows = $infoQuery->rowCount();
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
 
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status LIMIT :per_page OFFSET :page");
+    $q = $db->connection->prepare("SELECT * FROM projects_archieve WHERE status=:status LIMIT :per_page OFFSET :page");
     $q->bindParam(':status', $status);
     $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
     $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
@@ -104,14 +104,14 @@ function getProjectByCuratorId($curatorId)
 { // curator must be numeric(id)
     require_once '../../database.php';
     $db = new Database();
-    $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE curator=:curator');
+    $infoQuery = $db->connection->prepare('SELECT * FROM projects_archieve WHERE curator=:curator');
     $infoQuery->bindParam(':curator', $curatorId);
     $infoQuery->execute();
     $rows = $infoQuery->rowCount();
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
 
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator LIMIT :per_page OFFSET :page");
+    $q = $db->connection->prepare("SELECT * FROM projects_archieve WHERE curator=:curator LIMIT :per_page OFFSET :page");
     $q->bindParam(':curator', $curatorId);
     $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
     $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
@@ -144,7 +144,7 @@ function getProjectByCuratorAndStatus($curator, $status)
     require_once '../../database.php';
     $db = new Database();
     if (is_numeric($curator)) {
-        $infoQuery = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=:status");
+        $infoQuery = $db->connection->prepare("SELECT * FROM projects_archieve WHERE curator=:curator AND status=:status");
         $infoQuery->bindParam(':curator', $curator);
         $infoQuery->bindParam(':status', $status);
         $infoQuery->execute();
@@ -152,7 +152,7 @@ function getProjectByCuratorAndStatus($curator, $status)
         $page = (int)$_GET['page'];
         $per_page = (int)$_GET['per_page'];
 
-        $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=:status LIMIT :per_page OFFSET :page");
+        $q = $db->connection->prepare("SELECT * FROM projects_archieve WHERE curator=:curator AND status=:status LIMIT :per_page OFFSET :page");
         $q->bindParam(':curator', $curator);
         $q->bindParam(':status', $status);
         $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
@@ -184,7 +184,7 @@ function getProjectByCuratorAndStatus($curator, $status)
         if ($q->rowCount() > 0) {
             $res = $q->fetchObject();
             $curatorId = $res->id;
-            $infoQuery = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curatorId AND status=:status");
+            $infoQuery = $db->connection->prepare("SELECT * FROM projects_archieve WHERE curator=:curatorId AND status=:status");
             $infoQuery->bindParam(':curatorId', $curatorId);
             $infoQuery->bindParam(':status', $status);
             $infoQuery->execute();
@@ -192,7 +192,7 @@ function getProjectByCuratorAndStatus($curator, $status)
             $page = (int)$_GET['page'];
             $per_page = (int)$_GET['per_page'];
 
-            $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curatorId AND status=:status LIMIT :per_page OFFSET :page");
+            $q = $db->connection->prepare("SELECT * FROM projects_archieve WHERE curator=:curatorId AND status=:status LIMIT :per_page OFFSET :page");
             $q->bindParam(':curatorId', $curatorId);
             $q->bindParam(':status', $status);
             $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
