@@ -73,7 +73,7 @@ function getProjectsByStatus()
         $res = $q->fetchAll(PDO::FETCH_ASSOC);
         http_response_code(200);
         echo json_encode([
-            'pages' => $pages + 1,
+            'pages' => $pages,
             'page' => $page,
             'per_page' => $per_page,
             'data' => $res
@@ -143,7 +143,7 @@ function getProjectByCuratorId($curatorId)
     } else {
         http_response_code(200);
         echo json_encode([
-            'pages' => $pages + 1,
+            'pages' => $pages,
             'page' => $page,
             'per_page' => $per_page,
             'data' => null
@@ -188,7 +188,7 @@ function getProjectByCuratorAndStatus($curator, $status)
             $res = $q->fetchAll(PDO::FETCH_ASSOC);
             http_response_code(200);
             echo json_encode([
-                'pages' => $pages + 1,
+                'pages' => $pages,
                 'page' => $page,
                 'per_page' => $per_page,
                 'data' => $res
@@ -228,7 +228,7 @@ function getProjectByCuratorAndStatus($curator, $status)
                 $res = $q->fetchAll(PDO::FETCH_ASSOC);
                 http_response_code(200);
                 echo json_encode([
-                    'pages' => $pages + 1,
+                    'pages' => $pages,
                     'page' => $page,
                     'per_page' => $per_page,
                     'data' => $res
