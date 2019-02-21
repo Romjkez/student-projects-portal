@@ -49,8 +49,14 @@ function getProjectsByStatus()
     $rows = $infoQuery->rowCount();
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
+
     if ($status === 30) {
         $q = $db->connection->prepare("SELECT * FROM projects WHERE status=0 OR status=3 LIMIT :per_page OFFSET :page");
+        $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
+        $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
+        $q->execute();
+    } else if ($status === 12) {
+        $q = $db->connection->prepare("SELECT * FROM projects WHERE status=1 OR status=2 LIMIT :per_page OFFSET :page");
         $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
         $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
         $q->execute();
@@ -160,6 +166,12 @@ function getProjectByCuratorAndStatus($curator, $status)
         $per_page = (int)$_GET['per_page'];
         if ($status === 30) {
             $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=0 OR status=3 LIMIT :per_page OFFSET :page");
+            $q->bindParam(':curator', $curator);
+            $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
+            $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
+            $q->execute();
+        } else if ($status === 12) {
+            $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=1 OR status=2 LIMIT :per_page OFFSET :page");
             $q->bindParam(':curator', $curator);
             $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
             $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
