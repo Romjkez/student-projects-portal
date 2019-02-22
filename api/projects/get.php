@@ -43,19 +43,45 @@ function getProjectsByStatus()
     $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
     require_once '../../database.php';
     $db = new Database();
-    $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status');
-    $infoQuery->bindParam(':status', $status);
-    $infoQuery->execute();
-    $rows = $infoQuery->rowCount();
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
+    if ($status == 30) {
+        $status0 = 0;
+        $status3 = 3;
+        $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status0 OR status=:status3');
+        $infoQuery->bindParam(':status0', $status0);
+        $infoQuery->bindParam(':status3', $status3);
 
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status LIMIT :per_page OFFSET :page");
-    $q->bindParam(':status', $status);
+        $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status0 OR status=:status3 LIMIT :per_page OFFSET :page");
+        $q->bindParam(':status0', $status0);
+        $q->bindParam(':status3', $status3);
+
+    } else if ($status == 12) {
+        $status1 = 1;
+        $status2 = 2;
+        $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status1 OR status=:status2');
+        $infoQuery->bindParam(':status1', $status1);
+        $infoQuery->bindParam(':status2', $status2);
+
+        $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status1 OR status=:status2 LIMIT :per_page OFFSET :page");
+        $q->bindParam(':status1', $status1);
+        $q->bindParam(':status2', $status2);
+    } else {
+        $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status');
+        $infoQuery->bindParam(':status', $status);
+
+        $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status LIMIT :per_page OFFSET :page");
+        $q->bindParam(':status', $status);
+
+    }
     $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
     $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
-    $q->execute();
+
+    $infoQuery->execute();
+    $rows = $infoQuery->rowCount();
     $pages = ceil($rows / $per_page);
+
+    $q->execute();
     if ($q->rowCount() > 0) {
         $res = $q->fetchAll(PDO::FETCH_ASSOC);
         http_response_code(200);
@@ -63,7 +89,7 @@ function getProjectsByStatus()
             'pages' => $pages,
             'page' => $page,
             'per_page' => $per_page,
-            'data' => $res
+            'data' => $res,
         ]);
     } else {
         http_response_code(200);
@@ -71,7 +97,7 @@ function getProjectsByStatus()
             'pages' => $pages,
             'page' => $page,
             'per_page' => $per_page,
-            'data' => null
+            'data' => null,
         ]);
     }
 }
