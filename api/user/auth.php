@@ -30,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $data = [
                 'iat' => $issuedAt, // время создания токена
                 'upd' => $issuedAt, // последнее обновление токена
-                'jti' => $tokenId, // ID токена/сессии
                 'iss' => $serverName, // автор токена - сервер
                 'exp' => $expire, // время до которого валиден токен(14400 секунд)
                 'data' => [
                     'email' => $_POST['email'],
                     'usergroup' => $res['usergroup'],
+                    'id' => $res['id']
                 ]
             ];
             $jwt = JWT::encode($data, SECRET_KEY, ALGORITHM);
