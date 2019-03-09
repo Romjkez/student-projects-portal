@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $worker_id = (int)$_POST['worker_id'];
         $team = (int)$_POST['team'];
         $db = new Database();
-        $q = $db->connection->prepare("INSERT INTO `applications` (`id`, `worker_id`, `project_id`, `team`, `role`, `status`) VALUES (NULL, :worker, :project, :team, :role, '0')");
+        $q = $db->connection->prepare("INSERT INTO `applications` (`id`, `worker_id`, `project_id`, `team`, `role`, `status`, `comment`) VALUES (NULL, :worker, :project, :team, :role, '0', :comment)");
 
         $checkProjectQuery = $db->connection->prepare('SELECT id FROM `projects` WHERE id=:project');
 
@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->bindParam(':project', $project_id);
                 $q->bindParam(':team', $team);
                 $q->bindParam(':role', $_POST['role']);
+                $q->bindParam(':comment', $_POST['comment']);
                 $result = $q->execute();
                 if ($result == true) {
                     http_response_code(201);

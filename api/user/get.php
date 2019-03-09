@@ -1,10 +1,7 @@
 <?php
-
 require_once '../headers.php';
-
-
-// получение информации о пользователе по id, email, surname
 require_once '../../database.php';
+
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_SESSION['email']) || $_GET['api_key'] == 'android') {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
