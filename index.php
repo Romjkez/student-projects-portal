@@ -1,6 +1,5 @@
 <?php session_start();
 printHeader();
-// тут запрос к API на обновление списка проектов
 if (isset($_SESSION['name']) && (isset($_SESSION['surname']) && isset($_SESSION['email']))) {
     require_once 'classes/auth.php';
     $auth = new Auth();
