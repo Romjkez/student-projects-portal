@@ -12,13 +12,14 @@ function processQuery()
             $checkEmail->bindParam(':email', $data['email']);
             $checkEmail->execute();
             $emailResult = $checkEmail->fetch();
-            if ($emailResult[0] != $data['id']) {
+            $emails = $checkEmail->rowCount();
+            if ($emailResult[0] != $data['id'] && $emails > 0) {
                 http_response_code(200);
                 return json_encode(['message' => 'This email is already registered by another user']);
             } else {
                 if (!isset($data['name'])) $data['name'] = '';
                 if (!isset($data['middlename'])) $data['middlename'] = '';
-                if (!isset($data['phone'])) $data['phone'] = '';
+                if (!isset($data['tel'])) $data['tel'] = '';
                 if (!isset($data['std_group'])) $data['std_group'] = '';
                 if (!isset($data['description'])) $data['description'] = '';
                 if (!isset($data['avatar'])) $data['avatar'] = '';
