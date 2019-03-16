@@ -3,6 +3,7 @@ require_once '../headers.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($_POST['api_key'] == 'android') {
+        $tags = prepareTags($_POST['tags']);
         require_once '../../database.php';
         $db = new Database();
         $q = $db->connection->prepare("INSERT INTO `projects` (`id`, `title`, `description`, `members`, `deadline`, `curator`, `tags`, `status`,`adm_comment`) VALUES (NULL,?,?,?,?,?,?,0,'')");
@@ -11,12 +12,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->bindParam(3, $_POST['members']);
         $q->bindParam(4, $_POST['deadline']);
         $q->bindParam(5, $_POST['curator']);
-        $q->bindParam(6, $_POST['tags']);
+        $q->bindParam(6, $tags);
         $result = $q->execute();
         if ($result == true) {
             http_response_code(201);
             echo json_encode(['message' => "true"]);
-            logCreation();
+            logCreation($tags);
         } else {
             http_response_code(200);
             echo json_encode(['message' => "false"]);
@@ -30,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
 }
-function logCreation()
+function logCreation($tags)
 {
     date_default_timezone_set("Europe/Moscow");
     $newArr = [];
@@ -39,6 +40,16 @@ function logCreation()
             $newArr[$key] = $value;
         } else $newArr[$key] = 'NULL';
     }
-    $newlog = "\n" . 'CREATE:' . date('Y-m-d[H:i:s]') . ' | TITLE:' . $newArr['title'] . ' | DEADLINE:' . $newArr['deadline'] . ' | CURATOR:' . $newArr['curator'] . ' | TAGS:' . $newArr['tags'] . ' | STATUS: 0';
+    $newlog = "\n" . 'CREATE:' . date('Y-m-d[H:i:s]') . ' | TITLE:' . $newArr['title'] . ' | DEADLINE:' . $newArr['deadline'] . ' | CURATOR:' . $newArr['curator'] . ' | TAGS:' . $tags . ' | STATUS: 0';
     file_put_contents('../../log/projects.txt', $newlog, FILE_APPEND);
+}
+
+function prepareTags($tags)
+{
+    $tags = explode(',', $tags, 8);
+    $result = [];
+    for ($i = 0; $i < count($tags) - 1; $i++) {
+        $result[$i] = $tags[$i];
+    }
+    return implode(',', $result);
 }
