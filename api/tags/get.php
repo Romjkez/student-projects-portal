@@ -39,10 +39,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else {
         $q = $db->connection->prepare('SELECT category,value FROM tags');
         $q->execute();
-        if ($q->rowCount() > 0) {
-            $result = $q->fetchAll(PDO::FETCH_ASSOC);
+        $rows = $q->rowCount();
+        if ($rows > 0) {
+            $output = new ArrayObject();
+            for ($i = 0; $i < $rows; $i++) {
+                $result = $q->fetch(PDO::FETCH_NUM);
+                $result[1] = explode(',', $result[1]);
+                $output[$result[0]] = $result[1];
+            }
+
             http_response_code(200);
-            echo json_encode($result);
+            echo json_encode($output);
         } else {
             http_response_code(200);
             echo json_encode(['message' => 'No tags found']);

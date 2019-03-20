@@ -48,7 +48,7 @@ function prepareTags($tags)
 {
     $tags = explode(',', $tags, 8);
     $result = [];
-    for ($i = 0; $i < count($tags) - 1; $i++) {
+    for ($i = 0; $i < count($tags); $i++) {
         $result[$i] = $tags[$i];
     }
     return implode(',', $result);
