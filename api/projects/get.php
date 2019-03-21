@@ -11,6 +11,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectsByCurator();
     } else if (isset($_GET['curator']) && isset($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
+    } else if (is_numeric($_GET['worker']) && isset($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+        getProjectsByWorkerAndStatus();
     } else {
         http_response_code(200);
         echo json_encode(['message' => 'No valid GET parameters found']);
@@ -240,4 +242,24 @@ function getProjectByCuratorAndStatus($curator, $status)
             echo json_encode(['message' => 'No projects found']);
         }
     }
+}
+
+function getProjectsByWorkerAndStatus()
+{
+    $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
+    require_once '../../database.php';
+    $page = (int)$_GET['page'];
+    $per_page = (int)$_GET['per_page'];
+    $db = new Database();
+    $status0 = 0;
+    $status1 = 1;
+    $status2 = 2;
+    $status3 = 3;
+    if ($status == 30) {
+        $infoQuery = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND (status=:status0 OR status=:status3)");
+        $infoQuery->bindParam(':status0', $status0);
+        $infoQuery->bindParam(':status3', $status3);
+        // todo ДОБАВИТЬ ЮЗЕРУ ПОЛЕ АКТИВНЫЕ И ЗАВЕРШЕННЫЕ ПРОЕКТЫ, А ПРОЕКТУ - ДАТУ ОКОНЧАНИЯ ПРОЕКТА
+    }
+
 }
