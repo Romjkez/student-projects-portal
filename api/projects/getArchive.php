@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         http_response_code(200);
         echo json_encode(['message' => 'No valid GET parameters found']);
     }
-
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
@@ -144,3 +143,31 @@ function getProjectByCuratorId($curatorId)
         ]);
     }
 }
+
+function fillMembers($members)
+{
+    $members = json_decode($members);
+    $db = new Database();
+    for ($i = 0; $i < count($members); $i++) {
+        foreach ($members[$i] as $key => &$value) {
+            if ($value != 0) {
+                $user = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM users WHERE users.id=:id");
+                $user->bindParam(':id', $value);
+                $user->execute();
+                $value = $user->rowCount() > 0 ? $user->fetchObject() : 0;
+            }
+        }
+    }
+    return $members;
+}
+
+function getCurator($curatorId)
+{
+    $db = new Database();
+    $q = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM users WHERE users.id=:id");
+    $q->bindParam(':id', $curatorId);
+    $q->execute();
+    return $q->rowCount() > 0 ? $q->fetchObject() : $curatorId;
+}
+
+
