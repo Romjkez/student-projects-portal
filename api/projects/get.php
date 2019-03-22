@@ -27,7 +27,7 @@ function getProjectById()
     $id = (int)preg_replace('/[^0-9]/', '', $_GET['id']); // =0 if GET[id] does not contain numbers
     require_once '../../database.php';
     $db = new Database();
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE id=?");
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE id=?");
     $q->bindParam(1, $id);
     $q->execute();
     if ($q->rowCount() > 0) {
@@ -50,29 +50,29 @@ function getProjectsByStatus()
     if ($status == 30) {
         $status0 = 0;
         $status3 = 3;
-        $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status0 OR status=:status3');
+        $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status0 OR status=:status3');
         $infoQuery->bindParam(':status0', $status0);
         $infoQuery->bindParam(':status3', $status3);
 
-        $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status0 OR status=:status3 ORDER BY id DESC LIMIT :per_page OFFSET :page");
+        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status0 OR status=:status3 ORDER BY id DESC LIMIT :per_page OFFSET :page");
         $q->bindParam(':status0', $status0);
         $q->bindParam(':status3', $status3);
 
     } else if ($status == 12) {
         $status1 = 1;
         $status2 = 2;
-        $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status1 OR status=:status2');
+        $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status1 OR status=:status2');
         $infoQuery->bindParam(':status1', $status1);
         $infoQuery->bindParam(':status2', $status2);
 
-        $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status1 OR status=:status2 ORDER BY id DESC LIMIT :per_page OFFSET :page");
+        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status1 OR status=:status2 ORDER BY id DESC LIMIT :per_page OFFSET :page");
         $q->bindParam(':status1', $status1);
         $q->bindParam(':status2', $status2);
     } else {
-        $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE status=:status');
+        $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status');
         $infoQuery->bindParam(':status', $status);
 
-        $q = $db->connection->prepare("SELECT * FROM projects WHERE status=:status ORDER BY id DESC LIMIT :per_page OFFSET :page");
+        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status ORDER BY id DESC LIMIT :per_page OFFSET :page");
         $q->bindParam(':status', $status);
 
     }
@@ -132,14 +132,14 @@ function getProjectByCuratorId($curatorId)
 { // curator must be numeric(id)
     require_once '../../database.php';
     $db = new Database();
-    $infoQuery = $db->connection->prepare('SELECT * FROM projects WHERE curator=:curator');
+    $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE curator=:curator');
     $infoQuery->bindParam(':curator', $curatorId);
     $infoQuery->execute();
     $rows = $infoQuery->rowCount();
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
 
-    $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator ORDER BY id DESC LIMIT :per_page OFFSET :page");
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator ORDER BY id DESC LIMIT :per_page OFFSET :page");
     $q->bindParam(':curator', $curatorId);
     $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
     $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
@@ -179,26 +179,26 @@ function getProjectByCuratorAndStatus($curator, $status)
     $status3 = 3;
     if (is_numeric($curator)) {
         if ($status == 30) {
-            $infoQuery = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND (status=:status0 OR status=:status3)");
+            $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3)");
             $infoQuery->bindParam(':status0', $status0);
             $infoQuery->bindParam(':status3', $status3);
 
-            $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND (status=:status0 OR status=:status3) ORDER BY id DESC LIMIT :per_page OFFSET :page");
+            $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3) ORDER BY id DESC LIMIT :per_page OFFSET :page");
             $q->bindParam(':status0', $status0);
             $q->bindParam(':status3', $status3);
         } else if ($status == 12) {
-            $infoQuery = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND (status=:status1 OR status=:status2)");
+            $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status1 OR status=:status2)");
             $infoQuery->bindParam(':status1', $status1);
             $infoQuery->bindParam(':status2', $status2);
 
-            $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND (status=:status1 OR status=:status2) ORDER BY id DESC LIMIT :per_page OFFSET :page");
+            $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status1 OR status=:status2) ORDER BY id DESC LIMIT :per_page OFFSET :page");
             $q->bindParam(':status1', $status1);
             $q->bindParam(':status2', $status2);
         } else {
-            $infoQuery = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=:status");
+            $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND status=:status");
             $infoQuery->bindParam(':status', $status);
 
-            $q = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND status=:status ORDER BY id DESC LIMIT :per_page OFFSET :page");
+            $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND status=:status ORDER BY id DESC LIMIT :per_page OFFSET :page");
             $q->bindParam(':status', $status);
         }
         $q->bindParam(':curator', $curator);
@@ -256,10 +256,10 @@ function getProjectsByWorkerAndStatus()
     $status2 = 2;
     $status3 = 3;
     if ($status == 30) {
-        $infoQuery = $db->connection->prepare("SELECT * FROM projects WHERE curator=:curator AND (status=:status0 OR status=:status3)");
+        $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3)");
         $infoQuery->bindParam(':status0', $status0);
         $infoQuery->bindParam(':status3', $status3);
-        // todo ДОБАВИТЬ ЮЗЕРУ ПОЛЕ АКТИВНЫЕ И ЗАВЕРШЕННЫЕ ПРОЕКТЫ, А ПРОЕКТУ - ДАТУ ОКОНЧАНИЯ ПРОЕКТА
+        // todo ДОБАВИТЬ ЮЗЕРУ ПОЛЕ АКТИВНЫЕ И ЗАВЕРШЕННЫЕ ПРОЕКТЫ
     }
 
 }

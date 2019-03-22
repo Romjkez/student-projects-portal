@@ -2,19 +2,14 @@
 require_once '../headers.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_POST['api_key'] == 'android') {
-        require_once '../../database.php';
-        $db = new Database();
-        $q = $db->connection->prepare("UPDATE projects SET status=2 WHERE projects.deadline<NOW();
-INSERT INTO projects_archieve SELECT * FROM projects WHERE projects.deadline<NOW()-INTERVAL 3 MONTH;
-DELETE FROM projects WHERE projects.deadline<NOW()-INTERVAL 3 MONTH");
-        $res = $q->execute();
-        http_response_code(200);
-        echo ($res == 1) ? json_encode(['message' => 'true']) : json_encode(['message' => 'false']);
-    } else {
-        http_response_code(401);
-        echo json_encode(['message' => 'Authorization required']);
-    }
+    require_once '../../database.php';
+    $db = new Database();
+    $q = $db->connection->prepare("UPDATE projects_new SET status=2 WHERE projects_new.deadline<NOW();
+INSERT INTO projects_archieve SELECT * FROM projects_new WHERE projects_new.deadline<NOW()-INTERVAL 3 MONTH;
+DELETE FROM projects_new WHERE projects.deadline<NOW()-INTERVAL 3 MONTH");
+    $res = $q->execute();
+    http_response_code(200);
+    echo ($res == 1) ? json_encode(['message' => 'true']) : json_encode(['message' => 'false']);
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);

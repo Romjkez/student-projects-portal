@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $db = new Database();
         $q = $db->connection->prepare("INSERT INTO `applications` (`id`, `worker_id`, `project_id`, `team`, `role`, `status`, `comment`) VALUES (NULL, :worker, :project, :team, :role, '0', :comment)");
 
-        $checkProjectQuery = $db->connection->prepare('SELECT id FROM `projects` WHERE id=:project');
+        $checkProjectQuery = $db->connection->prepare('SELECT id FROM `projects_new` WHERE id=:project');
 
         $checkUserQuery = $db->connection->prepare('SELECT id FROM `users` WHERE id = :id');
         $checkUserQuery->bindParam(':id', $worker_id);
