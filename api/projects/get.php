@@ -49,6 +49,10 @@ function getProjectById()
 function getProjectsByStatus()
 {
     $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
+    $status0 = 0;
+    $status1 = 1;
+    $status2 = 2;
+    $status3 = 3;
     require_once '../../database.php';
     $db = new Database();
     $page = (int)$_GET['page'];
@@ -181,6 +185,10 @@ function getProjectByCuratorId($curatorId)
 function getProjectByCuratorAndStatus($curator, $status)
 {
     $status = (int)preg_replace('/[^0-9]/', '', $status); // =0 if GET[status] does not contain numbers
+    $status0 = 0;
+    $status1 = 1;
+    $status2 = 2;
+    $status3 = 3;
     require_once '../../database.php';
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
@@ -269,7 +277,6 @@ function getProjectsByWorkerAndStatus()
         $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3)");
         $infoQuery->bindParam(':status0', $status0);
         $infoQuery->bindParam(':status3', $status3);
-        // todo ДОБАВИТЬ ЮЗЕРУ ПОЛЕ АКТИВНЫЕ И ЗАВЕРШЕННЫЕ ПРОЕКТЫ
     }
 
 }
