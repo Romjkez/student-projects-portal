@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             http_response_code(200);
             echo json_encode(['message' => 'Such value is already set']);
         } else {
-            $q = $db->connection->prepare("UPDATE `projects_new` SET `status` = ?, `adm_comment` = ? WHERE `projects`.`id` = ?;");
+            $q = $db->connection->prepare("UPDATE `projects_new` SET `status` = ?, `adm_comment` = ? WHERE `projects_new`.`id` = ?;");
             $q->bindParam(1, $_POST['status']);
             $q->bindParam(2, $_POST['adm_comment']);
             $q->bindParam(3, $_POST['id']);
