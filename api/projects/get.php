@@ -1,7 +1,11 @@
 <?php
 require_once '../headers.php';
-// get project by id,
-// status or curator
+
+$status0 = 0;
+$status1 = 1;
+$status2 = 2;
+$status3 = 3;
+
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (isset($_GET['id'])) {
         getProjectById();
@@ -32,6 +36,8 @@ function getProjectById()
     $q->execute();
     if ($q->rowCount() > 0) {
         $res = $q->fetchObject();
+        $res->members = fillMembers($res->members);
+        $res->curator = getCurator($res->curator);
         http_response_code(200);
         echo json_encode($res);
     } else {
@@ -48,8 +54,6 @@ function getProjectsByStatus()
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
     if ($status == 30) {
-        $status0 = 0;
-        $status3 = 3;
         $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status0 OR status=:status3');
         $infoQuery->bindParam(':status0', $status0);
         $infoQuery->bindParam(':status3', $status3);
@@ -59,8 +63,6 @@ function getProjectsByStatus()
         $q->bindParam(':status3', $status3);
 
     } else if ($status == 12) {
-        $status1 = 1;
-        $status2 = 2;
         $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status1 OR status=:status2');
         $infoQuery->bindParam(':status1', $status1);
         $infoQuery->bindParam(':status2', $status2);
@@ -85,7 +87,13 @@ function getProjectsByStatus()
 
     $q->execute();
     if ($q->rowCount() > 0) {
-        $res = $q->fetchAll(PDO::FETCH_ASSOC);
+        $res = [];
+        for ($i = 0; $i < $q->rowCount(); $i++) {
+            $obj = $q->fetchObject();
+            $obj->members = fillMembers($obj->members);
+            $obj->curator = getCurator($obj->curator);
+            $res[$i] = $obj;
+        }
         http_response_code(200);
         echo json_encode([
             'pages' => $pages,
@@ -124,8 +132,6 @@ function getProjectsByCurator() // curator is id or email
             echo json_encode(['message' => 'No projects found']);
         }
     }
-
-
 }
 
 function getProjectByCuratorId($curatorId)
@@ -147,13 +153,19 @@ function getProjectByCuratorId($curatorId)
     $pages = ceil($rows / $per_page);
 
     if ($q->rowCount() > 0) {
-        $res = $q->fetchAll(PDO::FETCH_ASSOC);
+        $res = [];
+        for ($i = 0; $i < $q->rowCount(); $i++) {
+            $obj = $q->fetchObject();
+            $obj->members = fillMembers($obj->members);
+            $obj->curator = getCurator($obj->curator);
+            $res[$i] = $obj;
+        }
         http_response_code(200);
         echo json_encode([
             'pages' => $pages,
             'page' => $page,
             'per_page' => $per_page,
-            'data' => $res
+            'data' => $res,
         ]);
     } else {
         http_response_code(200);
@@ -173,10 +185,6 @@ function getProjectByCuratorAndStatus($curator, $status)
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
     $db = new Database();
-    $status0 = 0;
-    $status1 = 1;
-    $status2 = 2;
-    $status3 = 3;
     if (is_numeric($curator)) {
         if ($status == 30) {
             $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3)");
@@ -212,13 +220,19 @@ function getProjectByCuratorAndStatus($curator, $status)
         $q->execute();
         $pages = ceil($rows / $per_page);
         if ($q->rowCount() > 0) {
-            $res = $q->fetchAll(PDO::FETCH_ASSOC);
+            $res = [];
+            for ($i = 0; $i < $q->rowCount(); $i++) {
+                $obj = $q->fetchObject();
+                $obj->members = fillMembers($obj->members);
+                $obj->curator = getCurator($obj->curator);
+                $res[$i] = $obj;
+            }
             http_response_code(200);
             echo json_encode([
                 'pages' => $pages,
                 'page' => $page,
                 'per_page' => $per_page,
-                'data' => $res
+                'data' => $res,
             ]);
         } else {
             http_response_code(200);
@@ -251,10 +265,6 @@ function getProjectsByWorkerAndStatus()
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
     $db = new Database();
-    $status0 = 0;
-    $status1 = 1;
-    $status2 = 2;
-    $status3 = 3;
     if ($status == 30) {
         $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3)");
         $infoQuery->bindParam(':status0', $status0);
@@ -262,4 +272,30 @@ function getProjectsByWorkerAndStatus()
         // todo ДОБАВИТЬ ЮЗЕРУ ПОЛЕ АКТИВНЫЕ И ЗАВЕРШЕННЫЕ ПРОЕКТЫ
     }
 
+}
+
+function fillMembers($members)
+{
+    $members = json_decode($members);
+    $db = new Database();
+    for ($i = 0; $i < count($members); $i++) {
+        foreach ($members[$i] as $key => &$value) {
+            if ($value != 0) {
+                $user = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM users WHERE users.id=:id");
+                $user->bindParam(':id', $value);
+                $user->execute();
+                $value = $user->rowCount() > 0 ? $user->fetchObject() : 0;
+            }
+        }
+    }
+    return $members;
+}
+
+function getCurator($curatorId)
+{
+    $db = new Database();
+    $q = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM users WHERE users.id=:id");
+    $q->bindParam(':id', $curatorId);
+    $q->execute();
+    return $q->rowCount() > 0 ? $q->fetchObject() : $curatorId;
 }

@@ -28,6 +28,8 @@ function getProjectById()
     $q->execute();
     if ($q->rowCount() > 0) {
         $res = $q->fetchObject();
+        $res->members = fillMembers($res->members);
+        $res->curator = getCurator($res->curator);
         http_response_code(200);
         echo json_encode($res);
     } else {
@@ -52,13 +54,19 @@ function getProjects()
     $q->execute();
     $pages = ceil($rows / $per_page);
     if ($q->rowCount() > 0) {
-        $res = $q->fetchAll(PDO::FETCH_ASSOC);
+        $res = [];
+        for ($i = 0; $i < $q->rowCount(); $i++) {
+            $obj = $q->fetchObject();
+            $obj->members = fillMembers($obj->members);
+            $obj->curator = getCurator($obj->curator);
+            $res[$i] = $obj;
+        }
         http_response_code(200);
         echo json_encode([
             'pages' => $pages,
             'page' => $page,
             'per_page' => $per_page,
-            'data' => $res
+            'data' => $res,
         ]);
     } else {
         http_response_code(200);
@@ -91,8 +99,6 @@ function getProjectsByCurator() // curator is id or email
             echo json_encode(['message' => 'No projects found']);
         }
     }
-
-
 }
 
 function getProjectByCuratorId($curatorId)
@@ -114,13 +120,19 @@ function getProjectByCuratorId($curatorId)
     $pages = ceil($rows / $per_page);
 
     if ($q->rowCount() > 0) {
-        $res = $q->fetchAll(PDO::FETCH_ASSOC);
+        $res = [];
+        for ($i = 0; $i < $q->rowCount(); $i++) {
+            $obj = $q->fetchObject();
+            $obj->members = fillMembers($obj->members);
+            $obj->curator = getCurator($obj->curator);
+            $res[$i] = $obj;
+        }
         http_response_code(200);
         echo json_encode([
             'pages' => $pages,
             'page' => $page,
             'per_page' => $per_page,
-            'data' => $res
+            'data' => $res,
         ]);
     } else {
         http_response_code(200);

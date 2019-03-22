@@ -26,7 +26,7 @@ function getUsersById($ids)
 {
     $db = new Database();
     $resp = [];
-    $q = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE id=:id");
+    $q = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM `users` WHERE id=:id");
     foreach ($ids as $key => $value) {
         $q->execute([':id' => (integer)$ids[$key]]);
         $rows = $q->rowCount();
@@ -40,7 +40,7 @@ function getUsersById($ids)
 function getUserByID($id)
 {
     $db = new Database();
-    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE id=:id");
+    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM `users` WHERE id=:id");
     $stmt->execute([':id' => $id]);
     $result = $stmt->fetchObject();
     $db->disconnect();
@@ -57,7 +57,7 @@ function getUserByID($id)
 function getUserBySurname($surname)
 {
     $db = new Database();
-    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE surname=?");
+    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM `users` WHERE surname=?");
     $stmt->bindParam(1, $surname);
     $stmt->execute();
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -75,7 +75,7 @@ function getUserBySurname($surname)
 function getUserByEmail($email)
 {
     $db = new Database();
-    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup FROM `users` WHERE email=?");
+    $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM `users` WHERE email=?");
     $stmt->bindParam(1, $email);
     $stmt->execute();
     $result = $stmt->fetchObject();

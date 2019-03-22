@@ -2,26 +2,32 @@
 require_once '../headers.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $tags = prepareTags($_POST['tags']);
-    require_once '../../database.php';
-    $db = new Database();
-    $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null)");
-    $q->bindParam(1, $_POST['title']);
-    $q->bindParam(2, $_POST['description']);
-    $q->bindParam(3, $_POST['members']);
-    $q->bindParam(4, $_POST['deadline']);
-    $q->bindParam(5, $_POST['finish_date']);
-    $q->bindParam(6, $_POST['curator']);
-    $q->bindParam(7, $tags);
-    $result = $q->execute();
-    if ($result == true) {
-        http_response_code(201);
-        echo json_encode(['message' => "true"]);
-        logCreation($tags);
+    if ($_POST['deadline'] < $_POST['finish_date']) {
+        $tags = prepareTags($_POST['tags']);
+        require_once '../../database.php';
+        $db = new Database();
+        $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null)");
+        $q->bindParam(1, $_POST['title']);
+        $q->bindParam(2, $_POST['description']);
+        $q->bindParam(3, $_POST['members']);
+        $q->bindParam(4, $_POST['deadline']);
+        $q->bindParam(5, $_POST['finish_date']);
+        $q->bindParam(6, $_POST['curator']);
+        $q->bindParam(7, $tags);
+        $result = $q->execute();
+        if ($result == true) {
+            http_response_code(201);
+            echo json_encode(['message' => "true"]);
+            logCreation($tags);
+        } else {
+            http_response_code(200);
+            echo json_encode(['message' => "false"]);
+        }
     } else {
         http_response_code(200);
-        echo json_encode(['message' => "false"]);
+        echo json_encode(['message' => "Deadline date should be earlier than finish date"]);
     }
+
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
@@ -35,7 +41,7 @@ function logCreation($tags)
             $newArr[$key] = $value;
         } else $newArr[$key] = 'NULL';
     }
-    $newlog = "\n" . 'CREATE:' . date('Y-m-d[H:i:s]') . ' | TITLE:' . $newArr['title'] . ' | DEADLINE:' . $newArr['deadline'] . ' | CURATOR:' . $newArr['curator'] . ' | TAGS:' . $tags . ' | STATUS: 0';
+    $newlog = "\n" . 'CREATE:' . date('Y-m-d[H:i:s]') . ' | TITLE:' . $newArr['title'] . ' | DEADLINE:' . $newArr['deadline'] . '| FINISH:' . $newArr['finish_date'] . ' | CURATOR:' . $newArr['curator'] . ' | TAGS:' . $tags;
     file_put_contents('../../log/projects.txt', $newlog, FILE_APPEND);
 }
 

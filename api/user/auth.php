@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 'data' => [
                     'email' => $_POST['email'],
                     'usergroup' => $res['usergroup'],
-                    'id' => $res['id']
+                    'id' => $res['id'],
                 ]
             ];
             $jwt = JWT::encode($data, SECRET_KEY, ALGORITHM);

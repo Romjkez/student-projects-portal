@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q->execute([':id' => $_POST['id']]);
         $res = $q->fetchObject();
         if ($res->status == $_POST['status']) {
-            http_response_code(200);
+            http_response_code(208);
             echo json_encode(['message' => 'Such value is already set']);
         } else {
             $q = $db->connection->prepare("UPDATE `projects_new` SET `status` = ?, `adm_comment` = ? WHERE `projects_new`.`id` = ?;");

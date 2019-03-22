@@ -8,7 +8,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $data = prepareData($_POST);
 
         $pass = password_hash($data['pass'], PASSWORD_DEFAULT);
-        $q = $db->connection->prepare("INSERT INTO `users` (`id`, `name`, `surname`, `middle_name`, `email`, `password`, `phone`, `stdgroup`, `description`, `avatar`, `usergroup`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $q = $db->connection->prepare("INSERT INTO `users` (`id`, `name`, `surname`, `middle_name`, `email`, `password`, `phone`, `stdgroup`, `description`, `avatar`, `usergroup`, `active_projects`, `finished_projects`) VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NULL, NULL)");
 
         $q->bindParam(1, $data['name']);
         $q->bindParam(2, $data['surname']);

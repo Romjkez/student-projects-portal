@@ -31,7 +31,7 @@ function printProjectStatus($status)
     return 'неизвестно';
 }
 
-function prepareTags(string $tagsStr)
+function prepareTags($tagsStr)
 {
     $tags = explode(',', $tagsStr);
     $str = '';
