@@ -9,7 +9,7 @@ INSERT INTO projects_archieve SELECT * FROM projects_new WHERE projects_new.fini
 DELETE FROM projects_new WHERE projects.deadline<NOW()-INTERVAL 1 MONTH");
     $res = $q->execute();
     http_response_code(200);
-    echo ($res == 1) ? json_encode(['message' => 'true']) : json_encode(['message' => 'false']);
+    echo ($res == 1) ? json_encode(['message' => true]) : json_encode(['message' => false]);
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);

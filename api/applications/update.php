@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             http_response_code(200);
             echo json_encode(['message' => 'This value is already set']);
         } else {
-            if ($_POST['status'] == 1 && $checkResult->status != 1) {
+            if ($_POST['status'] == 1 && $checkResult->status != 1 && $checkResult->status != 2) {
                 // include worker in project
                 $project = $db->connection->prepare("SELECT members FROM projects_new WHERE id=:project_id");
                 $project->bindParam(':project_id', $checkResult->project_id);
@@ -46,9 +46,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         $actResult = $insertActiveProjects->execute();
                         if ($actResult == true) {
                             // update status of application
-                            $q = $db->connection->prepare("UPDATE applications SET status=:s WHERE id=:id");
+                            $stwo = 2;
+                            $q = $db->connection->prepare("UPDATE applications SET status=:sone WHERE id=:id; UPDATE applications SET status=:stwo WHERE project_id=:project AND team=:team AND role=:role AND NOT(worker_id=:worker)");
+                            $q->bindParam(':sone', $_POST['status']);
                             $q->bindParam(':id', $_POST['id']);
-                            $q->bindParam(':s', $_POST['status']);
+                            $q->bindParam(':stwo', $stwo);
+                            $q->bindParam(':role', $checkResult->role);
+                            $q->bindParam(':project', $checkResult->project_id);
+                            $q->bindParam(':team', $checkResult->team);
+                            $q->bindParam(':worker', $checkResult->worker_id);
+
                             $res = $q->execute();
                             if ($res == true) {
                                 echo json_encode(['message' => true]);
@@ -65,10 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     echo json_encode(['message' => $projectMembers]);
                 }
 
-            } else if ($_POST['status'] == 2 && $checkResult->status != 2) {
-                $q = $db->connection->prepare("UPDATE applications SET status=:s WHERE id=:id");
+            } else if ($_POST['status'] == 2 && $checkResult->status != 2 && $checkResult->status != 1) {
+
+                $q = $db->connection->prepare("UPDATE applications SET status=:s1 WHERE id=:id");
                 $q->bindParam(':id', $_POST['id']);
-                $q->bindParam(':s', $_POST['status']);
+                $q->bindParam(':s1', $_POST['status']);
                 $res = $q->execute();
                 if ($res == true) {
                     echo json_encode(['message' => true]);
@@ -113,13 +121,16 @@ function updateMembers(array $members, int $team, string $role, int $worker_id)
     return $members;
 }
 
-/**
- * @param object $application
- * @return string
- */
-function getUserActiveProjects(object $application)
-{
-    $db = new Database();
 
-    //return $activeProjects;
+function declineOthers(object $checkResult)
+{
+    $stwo = 2;
+    $db = new Database();
+    $q = $db->connection->prepare("UPDATE applications SET status=:s WHERE project_id=:project AND team=:team AND NOT(worker_id=:worker)");
+    $q->bindParam(':stwo', $s);
+    $q->bindParam(':project', $checkResult->project_id);
+    $q->bindParam(':team', $checkResult->team);
+    $q->bindParam(':worker', $checkResult->worker_id);
+    $res = $q->execute();
+    return $res;
 }
