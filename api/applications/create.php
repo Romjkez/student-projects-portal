@@ -13,7 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $isExists->bindParam(':project', $_POST['project_id']);
         $isExists->execute();
         if ($isExists->rowCount() > 0) {
-            echo json_encode(['message' => 'This user is already applied to this project']);
+            // todo запретить записываться когда уже есть активные проекты
+            echo json_encode(['message' => 'Вы уже подали заявку на этот проект']);
         } else {
             $q = $db->connection->prepare("INSERT INTO `applications` (`id`, `worker_id`, `project_id`, `team`, `role`, `status`, `comment`) VALUES (NULL, :worker, :project, :team, :role, '0', :comment)");
 

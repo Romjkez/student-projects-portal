@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $checkResult = $check->fetchObject();
         if ($checkResult->status == $_POST['status']) {
             http_response_code(200);
-            echo json_encode(['message' => 'This value is already set']);
+            echo json_encode(['message' => 'У заявки уже установлен предлагаемый статус']);
         } else {
             if ($_POST['status'] == 1 && $checkResult->status != 1 && $checkResult->status != 2) {
                 // include worker in project
@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if ($actResult == true) {
                             // update status of application
                             $stwo = 2;
-                            $q = $db->connection->prepare("UPDATE applications SET status=:sone WHERE id=:id; UPDATE applications SET status=:stwo WHERE project_id=:project AND team=:team AND role=:role AND NOT(worker_id=:worker)");
+                            $q = $db->connection->prepare("UPDATE applications SET status=:sone WHERE id=:id; UPDATE applications SET status=:stwo WHERE (project_id=:project AND team=:team AND role=:role AND NOT(worker_id=:worker)) OR (worker_id=:worker AND NOT(project_id=:project))");
                             $q->bindParam(':sone', $_POST['status']);
                             $q->bindParam(':id', $_POST['id']);
                             $q->bindParam(':stwo', $stwo);
@@ -58,15 +58,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
                             $res = $q->execute();
                             if ($res == true) {
-                                echo json_encode(['message' => true]);
+                                echo json_encode(['message' => 'true']);
                             } else {
-                                echo json_encode(['message' => false, 'code' => '110']);
+                                echo json_encode(['message' => 'false', 'code' => '110']);
                             }
                         } else {
-                            echo json_encode(['message' => false, 'code' => '100']);
+                            echo json_encode(['message' => 'false', 'code' => '100']);
                         }
                     } else {
-                        echo json_encode(['message' => false, 'code' => '000']);
+                        echo json_encode(['message' => 'false', 'code' => '000']);
                     }
                 } else {
                     echo json_encode(['message' => $projectMembers]);
@@ -79,17 +79,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $q->bindParam(':s1', $_POST['status']);
                 $res = $q->execute();
                 if ($res == true) {
-                    echo json_encode(['message' => true]);
+                    echo json_encode(['message' => 'true']);
                 } else {
-                    echo json_encode(['message' => false, 'code' => '000']);
+                    echo json_encode(['message' => 'false', 'code' => '000']);
                 }
             } else {
-                echo json_encode(['message' => 'Application is already accepted/declined']);
+                echo json_encode(['message' => 'Заявка уже рассмотрена']);
             }
         }
     } else {
         http_response_code(200);
-        echo json_encode(['message' => 'Specify both status and application id(1 or 2)']);
+        echo json_encode(['message' => 'Укажите status и application(1 или 2)']);
     }
 } else {
     http_response_code(405);
@@ -112,7 +112,7 @@ function updateMembers(array $members, int $team, string $role, int $worker_id)
                     if ($value === 0) {
                         $value = $worker_id;
                     } else {
-                        return 'This role is already occupied by other user';
+                        return 'эта позиция уже занята другим пользователем';
                     }
                 }
             }
