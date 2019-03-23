@@ -3,7 +3,7 @@ require_once '../headers.php';
 // get archive project by id or curator
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (isset($_GET['id'])) {
+    if (is_numeric($_GET['id'])) {
         getProjectById();
     } else if (!isset($_GET['curator']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjects();
@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 function getProjectById()
 {
-    $id = (int)preg_replace('/[^0-9]/', '', $_GET['id']); // =0 if GET[id] does not contain numbers
+    $id = $_GET['id'];
     require_once '../../database.php';
     $db = new Database();
     $q = $db->connection->prepare("SELECT * FROM projects_archieve WHERE id=?");

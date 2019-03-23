@@ -3,7 +3,7 @@ require_once '../headers.php';
 require_once '../../database.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (isset($_SESSION['email']) || $_GET['api_key'] == 'android') {
+    if ($_GET['api_key'] == 'android') {
         if (isset($_GET['id']) && is_numeric($_GET['id'])) {
             echo getUserByID($_GET['id']);
         } else if (isset($_GET['id']) && is_array($_GET['id'])) {
@@ -51,7 +51,6 @@ function getUserByID($id)
         http_response_code(200);
         return json_encode($result);
     }
-
 }
 
 function getUserBySurname($surname)
@@ -69,7 +68,6 @@ function getUserBySurname($surname)
         http_response_code(200);
         return json_encode($result);
     }
-
 }
 
 function getUserByEmail($email)

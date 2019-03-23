@@ -7,15 +7,15 @@ $status2 = 2;
 $status3 = 3;
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (isset($_GET['id'])) {
+    if (is_numeric($_GET['id'])) {
         getProjectById();
-    } else if (isset($_GET['status']) && !isset($_GET['curator']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+    } else if (is_numeric($_GET['status']) && !isset($_GET['curator']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectsByStatus();
     } else if (isset($_GET['curator']) && !isset($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectsByCurator();
-    } else if (isset($_GET['curator']) && isset($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+    } else if (isset($_GET['curator']) && is_numeric($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
-    } else if (is_numeric($_GET['worker']) && isset($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+    } else if (is_numeric($_GET['worker']) && is_numeric($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectsByWorkerAndStatus();
     } else {
         http_response_code(200);
@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 function getProjectById()
 {
-    $id = (int)preg_replace('/[^0-9]/', '', $_GET['id']); // =0 if GET[id] does not contain numbers
+    $id = $_GET['id'];
     require_once '../../database.php';
     $db = new Database();
     $q = $db->connection->prepare("SELECT * FROM projects_new WHERE id=?");
