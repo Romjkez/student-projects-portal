@@ -62,13 +62,13 @@ function processQuery()
                 $result = $q->execute();
 
                 if ($data['active_projects'] > 0) {
-                    $act = $db->connection->prepare("UPDATE `users SET active_projects=:active WHERE id=:id");
+                    $act = $db->connection->prepare("UPDATE users SET active_projects=:active WHERE id=:id");
                     $act->bindParam(':id', $data['id']);
                     $act->bindParam(':active', $data['active_projects']);
                     $result = $act->execute();
                 }
                 if ($data['finished_projects'] > 0) {
-                    $act = $db->connection->prepare("UPDATE `users SET finished_projects=:finished WHERE id=:id");
+                    $act = $db->connection->prepare("UPDATE users SET finished_projects=:finished WHERE id=:id");
                     $act->bindParam(':id', $data['id']);
                     $act->bindParam(':active', $data['finished_projects']);
                     $result = $act->execute();
