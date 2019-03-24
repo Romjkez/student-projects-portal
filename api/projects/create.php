@@ -2,31 +2,36 @@
 require_once '../headers.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_POST['deadline'] < $_POST['finish_date']) {
-        $tags = prepareTags($_POST['tags']);
-        require_once '../../database.php';
-        $db = new Database();
-        $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null)");
-        $q->bindParam(1, $_POST['title']);
-        $q->bindParam(2, $_POST['description']);
-        $q->bindParam(3, $_POST['members']);
-        $q->bindParam(4, $_POST['deadline']);
-        $q->bindParam(5, $_POST['finish_date']);
-        $q->bindParam(6, $_POST['curator']);
-        $q->bindParam(7, $tags);
-        $result = $q->execute();
-        if ($result == true) {
-            http_response_code(201);
-            echo json_encode(['message' => "true"]);
-            logCreation($tags);
+    if (isset($_POST['deadline']) && isset($_POST['finish_date']) && isset($_POST['title']) && isset($_POST['description']) && isset($_POST['members']) && is_numeric($_POST['curator']) && isset($_POST['tags'])) {
+        if (strtotime($_POST['deadline']) < strtotime($_POST['finish_date'])) {
+            $tags = prepareTags($_POST['tags']);
+            require_once '../../database.php';
+            $db = new Database();
+            $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null)");
+            $q->bindParam(1, $_POST['title']);
+            $q->bindParam(2, $_POST['description']);
+            $q->bindParam(3, $_POST['members']);
+            $q->bindParam(4, $_POST['deadline']);
+            $q->bindParam(5, $_POST['finish_date']);
+            $q->bindParam(6, $_POST['curator']);
+            $q->bindParam(7, $tags);
+            $result = $q->execute();
+            if ($result == true) {
+                http_response_code(201);
+                echo json_encode(['message' => "true"]);
+                logCreation($tags);
+            } else {
+                http_response_code(200);
+                echo json_encode(['message' => "false"]);
+            }
         } else {
             http_response_code(200);
-            echo json_encode(['message' => "false"]);
+            echo json_encode(['message' => "Крайняя дата записи должна быть раньше, чем дата окончания проекта"]);
         }
     } else {
-        http_response_code(200);
-        echo json_encode(['message' => "Deadline date should be earlier than finish date"]);
+        echo json_encode(['message' => 'Specify all the necessary params']);
     }
+
 
 } else {
     http_response_code(405);
@@ -50,7 +55,9 @@ function prepareTags($tags)
     $tags = explode(',', $tags, 8);
     $result = [];
     for ($i = 0; $i < count($tags); $i++) {
-        $result[$i] = $tags[$i];
+        if (count($tags[$i]) > 0) {
+            $result[$i] = $tags[$i];
+        }
     }
     return implode(',', $result);
 }
