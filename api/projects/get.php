@@ -15,8 +15,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectsByCurator();
     } else if (isset($_GET['curator']) && is_numeric($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
-    } else if (is_numeric($_GET['worker']) && is_numeric($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
-        getProjectsByWorkerAndStatus();
+    } else if (is_numeric($_GET['user']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+        getUserProjects();
     } else {
         http_response_code(200);
         echo json_encode(['message' => 'No valid GET parameters found']);
@@ -266,19 +266,24 @@ function getProjectByCuratorAndStatus($curator, $status)
     }
 }
 
-function getProjectsByWorkerAndStatus()
+function getUserProjects()
 {
-    $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
     require_once '../../database.php';
-    $page = (int)$_GET['page'];
-    $per_page = (int)$_GET['per_page'];
     $db = new Database();
-    if ($status == 30) {
-        $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3)");
-        $infoQuery->bindParam(':status0', $status0);
-        $infoQuery->bindParam(':status3', $status3);
-    }
+    $q = $db->connection->prepare("SELECT active_projects,finished_projects FROM users WHERE id=:user");
+    $q->bindParam(':user', $_GET['user']);
+    $q->execute();
+    if ($q->rowCount() > 0) {
+        $result = $q->fetchAll(PDO::FETCH_NUM);
+        $ids = [];
+        $active = explode(',', $result[0]);
+        // $ids = array_merge($ids, $active);
+        // $ids = array_merge($ids, explode(',', $result[1]));
 
+        echo json_encode($ids);
+    } else {
+        echo json_encode(['active_projects' => null, 'finished_projects' => null]);
+    }
 }
 
 function fillMembers($members)

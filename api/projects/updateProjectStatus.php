@@ -8,14 +8,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $q = $db->connection->prepare("SELECT * FROM `projects_new` WHERE `id` = :id");
         $q->execute([':id' => $_POST['id']]);
         $res = $q->fetchObject();
+        $curator = $res->curator;
         if ($res->status == $_POST['status']) {
-            http_response_code(208);
+            http_response_code(200);
             echo json_encode(['message' => 'Such value is already set']);
         } else {
-            $q = $db->connection->prepare("UPDATE `projects_new` SET `status` = ?, `adm_comment` = ? WHERE `projects_new`.`id` = ?;");
-            $q->bindParam(1, $_POST['status']);
-            $q->bindParam(2, $_POST['adm_comment']);
-            $q->bindParam(3, $_POST['id']);
+            $curatorQuery = $db->connection->prepare("SELECT active_projects FROM users WHERE id=:curator");
+            $curatorQuery->bindParam(':curator', $curator);
+            $curatorQuery->execute();
+            $curatorQueryResult = ($curatorQuery->fetch())[0];
+            if (count($curatorQueryResult) > 0) {
+                $curatorQueryResult = explode(',', $curatorQueryResult);
+                array_push($curatorQueryResult, ',' . $_POST['id']);
+                $curatorQueryResult = implode($curatorQueryResult);
+            } else {
+                $curatorQueryResult .= ',' . $_POST['id'];
+            }
+
+            $q = $db->connection->prepare("UPDATE `projects_new` SET `status` = :status, `adm_comment` =:adm_comment WHERE `projects_new`.`id` = :project; UPDATE users SET active_projects=:active WHERE id=:curator");
+            $q->bindParam(':status', $_POST['status']);
+            $q->bindParam(':adm_comment', $_POST['adm_comment']);
+            $q->bindParam(':project', $_POST['id']);
+            $q->bindParam(':active', $curatorQueryResult);
+            $q->bindParam(':curator', $curator);
             $result = $q->execute();
             if (!$result) {
                 http_response_code(200);
