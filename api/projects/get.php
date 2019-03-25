@@ -274,13 +274,24 @@ function getUserProjects()
     $q->bindParam(':user', $_GET['user']);
     $q->execute();
     if ($q->rowCount() > 0) {
-        $result = $q->fetchAll(PDO::FETCH_NUM);
+        $result = $q->fetchObject();
         $ids = [];
-        $active = explode(',', $result[0]);
-        // $ids = array_merge($ids, $active);
-        // $ids = array_merge($ids, explode(',', $result[1]));
-
-        echo json_encode($ids);
+        if ($result->active_projects !== null) {
+            $active = explode(',', $result->active_projects);
+            $ids = array_merge($active, $ids);
+        }
+        if ($result->finished_projects !== null) {
+            $finished = explode(',', $result->finished_projects);
+            $ids = array_merge($ids, $finished);
+        }
+        if (count($ids) > 0) {
+            // echo json_encode($ids);
+            //todo выводить объекты вместо идов
+            // попробовать приклеить OR к текущему запросу
+            // $projects = $db->connection->prepare("SELECT * FROM projects WHERE id=:id");
+        } else {
+            echo json_encode(['active_projects' => null, 'finished_projects' => null]);
+        }
     } else {
         echo json_encode(['active_projects' => null, 'finished_projects' => null]);
     }
