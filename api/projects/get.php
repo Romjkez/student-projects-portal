@@ -292,13 +292,17 @@ function getUserProjects()
             foreach ($active as $item) {
                 $projects->bindValue(1, $item);
                 $projects->execute();
-                array_push($result['active_projects'], $projects->fetchObject());
+                $elem = $projects->fetchObject();
+                $elem->curator = getCurator($elem->curator);
+                array_push($result['active_projects'], $elem);
             }
             if (count($result['active_projects']) == 0) $result['active_projects'] = null;
             foreach ($finished as $item) {
                 $projects->bindValue(1, $item);
                 $projects->execute();
-                array_push($result['finished_projects'], $projects->fetchObject());
+                $elem = $projects->fetchObject();
+                $elem->curator = getCurator($elem->curator);
+                array_push($result['finished_projects'], $elem);
             }
             if (count($result['finished_projects']) == 0) $result['finished_projects'] = null;
 
