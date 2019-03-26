@@ -275,20 +275,34 @@ function getUserProjects()
     $q->execute();
     if ($q->rowCount() > 0) {
         $result = $q->fetchObject();
-        $ids = [];
+        $active = [];
+        $finished = [];
         if ($result->active_projects !== null) {
             $active = explode(',', $result->active_projects);
-            $ids = array_merge($active, $ids);
         }
         if ($result->finished_projects !== null) {
             $finished = explode(',', $result->finished_projects);
-            $ids = array_merge($ids, $finished);
         }
-        if (count($ids) > 0) {
-            // echo json_encode($ids);
-            //todo выводить объекты вместо идов
-            // попробовать приклеить OR к текущему запросу
-            // $projects = $db->connection->prepare("SELECT * FROM projects WHERE id=:id");
+        if (count($active) > 0) {
+            $result = [
+                'active_projects' => [],
+                'finished_projects' => []
+            ];
+            $projects = $db->connection->prepare("SELECT * FROM projects_new WHERE id=?");
+            foreach ($active as $item) {
+                $projects->bindValue(1, $item);
+                $projects->execute();
+                array_push($result['active_projects'], $projects->fetchObject());
+            }
+            if (count($result['active_projects']) == 0) $result['active_projects'] = null;
+            foreach ($finished as $item) {
+                $projects->bindValue(1, $item);
+                $projects->execute();
+                array_push($result['finished_projects'], $projects->fetchObject());
+            }
+            if (count($result['finished_projects']) == 0) $result['finished_projects'] = null;
+
+            echo json_encode($result);
         } else {
             echo json_encode(['active_projects' => null, 'finished_projects' => null]);
         }
