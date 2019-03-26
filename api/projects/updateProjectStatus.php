@@ -1,6 +1,5 @@
 <?php
 require_once '../headers.php';
-
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (is_numeric($_POST['id']) && is_numeric($_POST['status']) && isset($_POST['adm_comment'])) {
         require_once '../../database.php';
@@ -24,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $curatorQueryResult .= ',' . $_POST['id'];
             }
-
             $q = $db->connection->prepare("UPDATE `projects_new` SET `status` = :status, `adm_comment` =:adm_comment WHERE `projects_new`.`id` = :project; UPDATE users SET active_projects=:active WHERE id=:curator");
             $q->bindParam(':status', $_POST['status']);
             $q->bindParam(':adm_comment', $_POST['adm_comment']);

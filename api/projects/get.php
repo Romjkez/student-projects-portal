@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectsByCurator();
     } else if (isset($_GET['curator']) && is_numeric($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
-    } else if (is_numeric($_GET['user']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+    } else if (is_numeric($_GET['user'])) {
         getUserProjects();
     } else {
         http_response_code(200);
