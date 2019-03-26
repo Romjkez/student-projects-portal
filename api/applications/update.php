@@ -47,17 +47,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         if ($actResult == true) {
                             // update status of application
                             $stwo = 2;
-                            $q = $db->connection->prepare("UPDATE applications SET status=:sone WHERE id=:id; UPDATE applications SET status=:stwo WHERE (project_id=:project AND team=:team AND role=:role AND NOT(worker_id=:worker)) OR (worker_id=:worker AND NOT(project_id=:project))");
+                            $q = $db->connection->prepare("UPDATE applications SET status=:sone WHERE id=:id;");
+                            $q2 = $db->connection->prepare("UPDATE applications SET status=:stwo WHERE (project_id=:project AND team=:team AND role=:role AND NOT(worker_id=:worker)) OR (worker_id=:worker AND NOT(project_id=:project))");
                             $q->bindParam(':sone', $_POST['status']);
                             $q->bindParam(':id', $_POST['id']);
-                            $q->bindParam(':stwo', $stwo);
-                            $q->bindParam(':role', $checkResult->role);
-                            $q->bindParam(':project', $checkResult->project_id);
-                            $q->bindParam(':team', $checkResult->team);
-                            $q->bindParam(':worker', $checkResult->worker_id);
-
+                            $q2->bindParam(':stwo', $stwo);
+                            $q2->bindParam(':role', $checkResult->role);
+                            $q2->bindParam(':project', $checkResult->project_id);
+                            $q2->bindParam(':team', $checkResult->team);
+                            $q2->bindParam(':worker', $checkResult->worker_id);
+                            $q2->execute();
+                            $res2 = $q2->execute();
                             $res = $q->execute();
-                            if ($res == true) {
+                            if ($res && $res2) {
                                 echo json_encode(['message' => 'true']);
                             } else {
                                 echo json_encode(['message' => 'false', 'code' => '110']);

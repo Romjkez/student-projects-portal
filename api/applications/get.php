@@ -56,6 +56,7 @@ function getAppsByStatusAndProject()
 
 function isWorkerRequestedJoin()
 {
+    // todo проверять статус заявки: если заявка отклонена, то пользователь не реквестед джоин
     $db = new Database();
     $q = $db->connection->prepare("SELECT id FROM `applications` WHERE project_id=:project AND worker_id=:worker");
     $q->bindParam(':project', $_GET['project']);
