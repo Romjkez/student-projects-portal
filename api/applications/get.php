@@ -7,8 +7,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo getAppsByWorkerId();
     } else if (is_numeric($_GET['status']) && is_numeric($_GET['project'])) {
         echo getAppsByStatusAndProject();
-    } else if (is_numeric($_GET['worker']) && is_numeric($_GET['project'])) {
+    } else if (is_numeric($_GET['workerApplied']) && is_numeric($_GET['project'])) {
         echo isWorkerRequestedJoin();
+    } else if (is_numeric($_GET['worker'])) {
+        getUserApps();
     } else {
         http_response_code(200);
         echo json_encode(['message' => 'Specify GET parameters properly']);
@@ -60,7 +62,7 @@ function isWorkerRequestedJoin()
     $db = new Database();
     $q = $db->connection->prepare("SELECT id FROM `applications` WHERE project_id=:project AND worker_id=:worker");
     $q->bindParam(':project', $_GET['project']);
-    $q->bindParam(':worker', $_GET['worker']);
+    $q->bindParam(':worker', $_GET['workerApplied']);
     $q->execute();
     $rows = $q->rowCount();
     if ($rows > 0) {
@@ -70,4 +72,15 @@ function isWorkerRequestedJoin()
         http_response_code(200);
         return json_encode(['message' => 'false']);
     }
+}
+
+function getUserApps()
+{
+    // todo подменять иды проектов их объектами
+    $db = new Database();
+    $q = $db->connection->prepare("SELECT * FROM applications WHERE worker=:worker ORDER BY id DESC");
+    $q->bindParam(':worker', $_GET['worker']);
+    $q->execute();
+    $apps = $q->fetchAll();
+    echo $apps;
 }
