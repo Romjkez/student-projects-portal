@@ -293,17 +293,21 @@ function getUserProjects()
                 $projects->bindValue(1, $item);
                 $projects->execute();
                 $elem = $projects->fetchObject();
+                $elem->members = fillMembers($elem->members);
                 $elem->curator = getCurator($elem->curator);
                 array_push($result['active_projects'], $elem);
             }
+            json_decode($result['active_projects']);
             if (count($result['active_projects']) == 0) $result['active_projects'] = null;
             foreach ($finished as $item) {
                 $projects->bindValue(1, $item);
                 $projects->execute();
                 $elem = $projects->fetchObject();
+                $elem->members = fillMembers($elem->members);
                 $elem->curator = getCurator($elem->curator);
                 array_push($result['finished_projects'], $elem);
             }
+
             if (count($result['finished_projects']) == 0) $result['finished_projects'] = null;
 
             echo json_encode($result);
