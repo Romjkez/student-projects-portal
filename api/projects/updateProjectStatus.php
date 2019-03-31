@@ -4,7 +4,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (is_numeric($_POST['id']) && is_numeric($_POST['status']) && isset($_POST['adm_comment'])) {
         require_once '../../database.php';
         $db = new Database();
-        $q = $db->connection->prepare("SELECT * FROM `projects_new` WHERE `id` = :id");
+        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE `id` = :id");
         $q->execute([':id' => $_POST['id']]);
         $res = $q->fetchObject();
         $curator = $res->curator;
@@ -18,12 +18,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $curatorQueryResult = ($curatorQuery->fetch())[0];
             if (count($curatorQueryResult) > 0) {
                 $curatorQueryResult = explode(',', $curatorQueryResult);
-                array_push($curatorQueryResult, ',' . $_POST['id']);
-                $curatorQueryResult = implode($curatorQueryResult);
+                array_push($curatorQueryResult, $_POST['id']);
+                $curatorQueryResult = implode(',', $curatorQueryResult);
             } else {
                 $curatorQueryResult .= ',' . $_POST['id'];
             }
-            $q = $db->connection->prepare("UPDATE `projects_new` SET `status` = :status, `adm_comment` =:adm_comment WHERE `projects_new`.`id` = :project; UPDATE users SET active_projects=:active WHERE id=:curator");
+            $q = $db->connection->prepare("UPDATE projects_new SET `status` = :status, `adm_comment` =:adm_comment WHERE `projects_new`.`id` = :project; UPDATE users SET active_projects=:active WHERE id=:curator");
             $q->bindParam(':status', $_POST['status']);
             $q->bindParam(':adm_comment', $_POST['adm_comment']);
             $q->bindParam(':project', $_POST['id']);

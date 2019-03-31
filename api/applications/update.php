@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             // update status of application
                             $stwo = 2;
                             $q = $db->connection->prepare("UPDATE applications SET status=:sone WHERE id=:id;");
-                            $q2 = $db->connection->prepare("UPDATE applications SET status=:stwo WHERE (project_id=:project AND team=:team AND role=:role AND NOT(worker_id=:worker)) OR (worker_id=:worker AND NOT(project_id=:project))");
+                            $q2 = $db->connection->prepare("UPDATE applications SET status=:stwo WHERE (project_id=:project AND team=:team AND role=:role AND NOT(worker_id=:worker)) OR (worker_id=:worker AND NOT(project_id=:project) AND status=0)");
                             $q->bindParam(':sone', $_POST['status']);
                             $q->bindParam(':id', $_POST['id']);
                             $q2->bindParam(':stwo', $stwo);
