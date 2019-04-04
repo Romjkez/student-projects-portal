@@ -1,5 +1,6 @@
 <?php
 require_once '../headers.php';
+header('Access-Control-Allow-Methods: DELETE, OPTIONS');
 
 if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     if (is_numeric($_REQUEST['id'])) {
@@ -25,6 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
             echo json_encode(['message' => 'Проект не найден']);
         }
     }
+} else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
