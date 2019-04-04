@@ -73,13 +73,14 @@ function updateUserProjects($user, int $projectId)
 
     if (!in_array($projectId, $finished_projects)) {
         array_push($finished_projects, $projectId);
-
     }
 
     $active_projects = implode(',', $active_projects);
     $finished_projects = implode(',', $finished_projects);
-
-    $user->active_projects = $active_projects;
+    if ($active_projects == null || iconv_strlen($active_projects) == 0) {
+        $user->active_projects = null;
+    } else
+        $user->active_projects = $active_projects;
     $user->finished_projects = $finished_projects;
     return $user;
 }

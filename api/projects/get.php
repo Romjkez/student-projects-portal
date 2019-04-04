@@ -1,6 +1,8 @@
 <?php
 require_once '../headers.php';
-
+/*ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);*/
 $status0 = 0;
 $status1 = 1;
 $status2 = 2;
@@ -293,9 +295,11 @@ function getUserProjects()
                 $projects->bindValue(1, $item);
                 $projects->execute();
                 $elem = $projects->fetchObject();
-                $elem->members = fillMembers($elem->members);
-                $elem->curator = getCurator($elem->curator);
-                array_push($result['active_projects'], $elem);
+                if ($elem) {
+                    $elem->members = fillMembers($elem->members);
+                    $elem->curator = getCurator($elem->curator);
+                    array_push($result['active_projects'], $elem);
+                }
             }
             json_decode($result['active_projects']);
             if (count($result['active_projects']) == 0) $result['active_projects'] = null;
