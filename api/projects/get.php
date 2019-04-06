@@ -285,7 +285,7 @@ function getUserProjects()
         if ($result->finished_projects !== null) {
             $finished = explode(',', $result->finished_projects);
         }
-        if (count($active) > 0) {
+        if (count($active) > 0 || count($finished) > 0) {
             $result = [
                 'active_projects' => [],
                 'finished_projects' => []
@@ -316,10 +316,10 @@ function getUserProjects()
 
             echo json_encode($result);
         } else {
-            echo json_encode(['active_projects' => null, 'finished_projects' => null]);
+            echo json_encode(['active_projects' => null, 'finished_projects' => null, 'code1']);
         }
     } else {
-        echo json_encode(['active_projects' => null, 'finished_projects' => null]);
+        echo json_encode(['active_projects' => null, 'finished_projects' => null, 'code2']);
     }
 }
 
