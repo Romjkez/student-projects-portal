@@ -19,6 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
     } else if (is_numeric($_GET['user'])) {
         getUserProjects();
+    } else if (isset($_GET['title_part'])) {
+        getProjectsByTitle();
     } else {
         http_response_code(200);
         echo json_encode(['message' => 'No valid GET parameters found']);
@@ -323,6 +325,23 @@ function getUserProjects()
     }
 }
 
+function getProjectsByTitle()
+{
+    require_once '../../database.php';
+    // todo ЗАКОНЧИТЬ ПОИСК ПО НАЗВАНИЮ
+    $db = new Database();
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE title LIKE '%:title_part%'");
+    $q->bindParam(":title_part", $_GET['title_part']);
+    $q->execute();
+    if ($q->rowCount() > 0) {
+        http_response_code(200);
+
+    } else {
+        http_response_code(200);
+        echo json_encode(['message' => 'Проекты не найдены']);
+    }
+}
+
 function fillMembers($members)
 {
     $members = json_decode($members);
@@ -348,3 +367,5 @@ function getCurator($curatorId)
     $q->execute();
     return $q->rowCount() > 0 ? $q->fetchObject() : $curatorId;
 }
+
+
