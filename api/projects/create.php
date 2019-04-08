@@ -7,7 +7,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $tags = prepareTags($_POST['tags']);
             require_once '../../database.php';
             $db = new Database();
-            $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null)");
+            $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`,`avatar`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null,?)");
             $q->bindParam(1, $_POST['title']);
             $q->bindParam(2, $_POST['description']);
             $q->bindParam(3, $_POST['members']);
@@ -15,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $q->bindParam(5, $_POST['finish_date']);
             $q->bindParam(6, $_POST['curator']);
             $q->bindParam(7, $tags);
+            $q->bindParam(8, $_POST['avatar']);
             $result = $q->execute();
             if ($result == true) {
                 http_response_code(201);
