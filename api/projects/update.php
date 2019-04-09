@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $result = $q->execute();
 
         if ($result) {
-            echo json_encode(['message' => $result]);
+            echo json_encode(['message' => 'true']);
         } else {
             echo json_encode(['message' => 'false']);
         }
