@@ -1,24 +1,15 @@
 <?php
-
-function update()
+function delete()
 {
-    $data = [];
-    $params = explode('&', file_get_contents('php://input'));
-    foreach ($params as &$item) {
-        $item = explode('=', $item);
-        $data[$item[0]] = $item[1];
-    }
-    if (iconv_strlen($data['category']) > 1 && is_numeric($data['id']) && iconv_strlen($data['value']) > 1) {
+    if (is_numeric($_REQUEST['id'])) {
         require_once '../../database.php';
         $db = new Database();
         $checkQuery = $db->connection->prepare("SELECT id FROM tags WHERE id=?");
-        $checkQuery->bindValue(1, (int)$data['id']);
+        $checkQuery->bindValue(1, $_REQUEST['id']);
         $checkQuery->execute();
         if ($checkQuery->rowCount() > 0) {
-            $q = $db->connection->prepare("UPDATE tags SET category=:cat, value=:val WHERE id=:id");
-            $q->bindParam(':cat', $data['category']);
-            $q->bindParam(':val', $data['value']);
-            $q->bindParam(':id', $data['id']);
+            $q = $db->connection->prepare('DELETE FROM tags WHERE id=?');
+            $q->bindValue(1, $_REQUEST['id']);
             $q->execute();
             $db->disconnect();
             $errors = $q->errorInfo();
@@ -35,6 +26,6 @@ function update()
         }
     } else {
         http_response_code(200);
-        echo json_encode(['message' => 'Specify category, id and value to proceed']);
+        echo json_encode(['message' => 'Specify tag ID']);
     }
 }

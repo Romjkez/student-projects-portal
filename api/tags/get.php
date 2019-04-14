@@ -1,20 +1,18 @@
 <?php
-require_once '../headers.php';
-require_once '../../database.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+function get()
+{
+    require_once '../../database.php';
     $db = new Database();
     if (isset($_GET['categories'])) {
         $q = $db->connection->prepare('SELECT category FROM tags');
         $q->execute();
+        $db->disconnect();
         $rows = $q->rowCount();
         if ($rows > 0) {
-            $result = '';
-            for ($i = 0; $i < $rows; $i++) {
-                $result .= $q->fetch(PDO::FETCH_NUM)[0];
-                if ($i !== $rows - 1) $result .= ',';
-            }
+            $result = $q->fetchAll(PDO::FETCH_UNIQUE);
             http_response_code(200);
+            $result = array_keys($result);
             echo json_encode($result);
         } else {
             http_response_code(200);
@@ -23,39 +21,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if (isset($_GET['values'])) {
         $q = $db->connection->prepare('SELECT value FROM tags');
         $q->execute();
+        $db->disconnect();
         $rows = $q->rowCount();
         if ($rows > 0) {
-            $result = '';
-            for ($i = 0; $i < $rows; $i++) {
-                $result .= $q->fetch(PDO::FETCH_NUM)[0];
-                if ($i !== $rows - 1) $result .= ',';
-            }
+            $result = $q->fetchAll(PDO::FETCH_UNIQUE);
             http_response_code(200);
+            $result = array_keys($result);
             echo json_encode($result);
         } else {
             http_response_code(200);
             echo json_encode(['message' => 'No tags found']);
         }
     } else {
-        $q = $db->connection->prepare('SELECT category,value FROM tags');
+        $q = $db->connection->prepare('SELECT id,category,value FROM tags');
         $q->execute();
+        $db->disconnect();
         $rows = $q->rowCount();
         if ($rows > 0) {
-            $output = new ArrayObject();
-            for ($i = 0; $i < $rows; $i++) {
-                $result = $q->fetch(PDO::FETCH_NUM);
-                $result[1] = explode(',', $result[1]);
-                $output[$result[0]] = $result[1];
-            }
-
+            $result = $q->fetchAll(PDO::FETCH_ASSOC);
             http_response_code(200);
-            echo json_encode($output);
+            echo json_encode($result);
         } else {
             http_response_code(200);
             echo json_encode(['message' => 'No tags found']);
         }
     }
-} else {
-    http_response_code(405);
-    echo json_encode(['message' => 'Method not supported']);
 }
