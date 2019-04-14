@@ -2,8 +2,8 @@
 require_once '../headers.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    if ($_POST['api_key'] == 'android') {
-        require_once '../../database.php';
+
+    require_once '../../database.php';
         $db = new Database();
         $data = prepareData($_POST);
         $q = $db->connection->prepare("SELECT password FROM `users` WHERE email=?");
@@ -15,10 +15,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             echo json_encode(['message' => 'true']);
         } else echo json_encode(['message' => 'false']);
         http_response_code(200);
-    } else {
-        http_response_code(401);
-        echo json_encode(['message' => 'Authorization required']);
-    }
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);

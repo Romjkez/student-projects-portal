@@ -1,0 +1,4 @@
+<?php
+const SECRET_KEY = 'a4074458293g';
+const ALGORITHM = 'HS512';
+const SESSION_DURATION = 86400;

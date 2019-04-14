@@ -48,6 +48,7 @@ DELETE FROM projects_new WHERE projects_new.finish_date<NOW()-INTERVAL 1 MONTH")
     $res = $q->execute();
     http_response_code(200);
     echo ($res == 1) ? json_encode(['message' => 'true']) : json_encode(['message' => 'false']);
+} else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);

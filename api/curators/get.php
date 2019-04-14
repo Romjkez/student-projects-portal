@@ -3,8 +3,8 @@ require_once '../headers.php';
 
 // получение всех заказчиков(кураторов)
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if ($_GET['api_key'] == 'android') {
-        require_once '../../database.php';
+
+    require_once '../../database.php';
         $db = new Database();
         $stmt = $db->connection->prepare("SELECT id,name,surname,middle_name,email,phone,stdgroup,description,avatar,usergroup,active_projects,finished_projects FROM `users` WHERE usergroup=2");
         $stmt->execute();
@@ -18,10 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo json_encode($result);
         }
         $db->disconnect();
-    } else {
-        http_response_code(401);
-        echo json_encode(['message' => 'Authorization required']);
-    }
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
