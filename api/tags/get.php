@@ -5,7 +5,7 @@ function get()
     require_once '../../database.php';
     $db = new Database();
     if (isset($_GET['categories'])) {
-        $q = $db->connection->prepare('SELECT category FROM tags');
+        $q = $db->connection->prepare('SELECT category FROM tags ORDER BY category');
         $q->execute();
         $db->disconnect();
         $rows = $q->rowCount();
@@ -33,7 +33,7 @@ function get()
             echo json_encode(['message' => 'No tags found']);
         }
     } else {
-        $q = $db->connection->prepare('SELECT id,category,value FROM tags');
+        $q = $db->connection->prepare('SELECT id,category,value FROM tags ORDER BY category');
         $q->execute();
         $db->disconnect();
         $rows = $q->rowCount();
