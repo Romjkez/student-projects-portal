@@ -9,11 +9,15 @@ function add()
         $q->bindValue(1, trim($_POST['category']));
         $q->bindValue(2, trim($_POST['value']));
         $q->execute();
-        $db->disconnect();
         $errors = $q->errorInfo();
         if ($errors[2] == null) {
+            $response = $db->connection->prepare("SELECT id,category,value FROM tags WHERE value=?");
+            $response->bindValue(1, trim($_POST['value']));
+            $response->execute();
+            $responseItem = $response->fetchObject();
+            $db->disconnect();
             http_response_code(201);
-            echo json_encode(['message' => 'true']);
+            echo json_encode($responseItem);
         } else {
             http_response_code(422);
             echo json_encode(['message' => $errors[2]]);
