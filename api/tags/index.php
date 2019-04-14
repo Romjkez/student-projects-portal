@@ -16,7 +16,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     require_once 'delete.php';
     delete();
+} else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
 }
+
