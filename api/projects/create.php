@@ -32,8 +32,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo json_encode(['message' => 'Specify all the necessary params']);
     }
-
-
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);
