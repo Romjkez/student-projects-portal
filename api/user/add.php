@@ -31,6 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         echo json_encode(['message' => "false"]);
     }
 
+} else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);

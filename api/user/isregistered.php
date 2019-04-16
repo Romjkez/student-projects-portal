@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         http_response_code(200);
         echo json_encode(['message' => 'No email to check']);
     }
+} else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);

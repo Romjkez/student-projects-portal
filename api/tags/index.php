@@ -11,6 +11,9 @@ use Firebase\JWT\JWT;
 $headers = getallheaders();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+} else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+    require_once 'get.php';
+    get();
 } else if (isset($headers['X-Auth-Token'])) {
     try {
         $token = JWT::decode($headers['X-Auth-Token'], SECRET_KEY, [ALGORITHM]);
@@ -41,9 +44,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             } else if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
                 require_once 'update.php';
                 update();
-            } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-                require_once 'get.php';
-                get();
             } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
                 require_once 'delete.php';
                 delete();

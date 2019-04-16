@@ -13,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         http_response_code(200);
         echo json_encode(['message' => 'Specify GET parameters properly']);
     }
+} else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
     echo json_encode(['message' => 'Method not supported']);

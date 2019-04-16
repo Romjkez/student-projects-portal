@@ -86,6 +86,7 @@ function processQuery()
             http_response_code(200);
             return json_encode(['message' => "Specify email(>4 symbols), id(numeric) and surname(>1 symbol)"]);
         }
+    } else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     } else {
         http_response_code(405);
         return json_encode(['message' => 'Method not supported']);
