@@ -1,11 +1,10 @@
 <?php
-require_once '../headers.php';
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+function create()
+{
     if (isset($_POST['deadline']) && isset($_POST['finish_date']) && isset($_POST['title']) && isset($_POST['description']) && isset($_POST['members']) && is_numeric($_POST['curator']) && isset($_POST['tags'])) {
         if (strtotime($_POST['deadline']) < strtotime($_POST['finish_date'])) {
             $tags = prepareTags($_POST['tags']);
-            require_once '../../database.php';
+            require_once '../../../database.php';
             $db = new Database();
             $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`,`avatar`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null,?)");
             $q->bindParam(1, $_POST['title']);
@@ -32,11 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else {
         echo json_encode(['message' => 'Specify all the necessary params']);
     }
-} else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-} else {
-    http_response_code(405);
-    echo json_encode(['message' => 'Method not supported']);
 }
+
+
 function logCreation($tags)
 {
     date_default_timezone_set("Europe/Moscow");

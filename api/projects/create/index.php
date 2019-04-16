@@ -1,24 +1,18 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST, OPTIONS, PUT, GET, DELETE');
-header('Access-Control-Expose-Headers: X-Auth-Token');
-header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
-require_once '../../constants.php';
-require_once('../../vendor/autoload.php');
 
 use Firebase\JWT\JWT;
 
-$headers = getallheaders();
+require_once '../../headers.php';
+require_once '../../../constants.php';
+require_once('../../../vendor/autoload.php');
 
+$headers = getallheaders();
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-} else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    require_once 'get.php';
-    get();
 } else if (isset($headers['X-Auth-Token'])) {
     try {
         $token = JWT::decode($headers['X-Auth-Token'], SECRET_KEY, [ALGORITHM]);
         if ($token->exp > time()) {
-            if ($token->data->usergroup == 3) {
+            if ($token->data->usergroup == 2) {
                 $updated = time();
                 $data = [
                     'iat' => $token->iat,
@@ -35,14 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                 header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
 
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    require_once 'add.php';
-                    add();
-                } else if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-                    require_once 'update.php';
-                    update();
-                } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-                    require_once 'delete.php';
-                    delete();
+                    require_once 'create.php';
+                    create();
                 } else {
                     http_response_code(405);
                     echo json_encode(['message' => 'Method not supported']);
