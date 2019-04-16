@@ -34,24 +34,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                 ];
                 header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
 
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                require_once 'add.php';
-                add();
-            } else if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
-                require_once 'update.php';
-                update();
-            } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-                require_once 'delete.php';
-                delete();
+                if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                    require_once 'add.php';
+                    add();
+                } else if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
+                    require_once 'update.php';
+                    update();
+                } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+                    require_once 'delete.php';
+                    delete();
+                } else {
+                    http_response_code(405);
+                    echo json_encode(['message' => 'Method not supported']);
+                }
             } else {
-                http_response_code(405);
-                echo json_encode(['message' => 'Method not supported']);
+                http_response_code(401);
+                echo json_encode(['message' => 'You are not allowed to proceed this request']);
             }
         } else {
             http_response_code(401);
-            echo json_encode(['message' => 'You are not allowed to proceed this request']);
+            echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
         }
-    } else {
+    } catch (Exception $e) {
         http_response_code(401);
         echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
     }
