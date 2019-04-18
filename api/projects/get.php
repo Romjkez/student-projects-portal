@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
     } else if (is_numeric($_GET['user'])) {
         getUserProjects();
-    } else if (iconv_strlen($_GET['title']) > 2) {
+    } else if (iconv_strlen($_GET['title']) > 2 && iconv_strlen($_GET['title']) < 100) {
         getProjectsByTitle();
     } else {
         http_response_code(200);
