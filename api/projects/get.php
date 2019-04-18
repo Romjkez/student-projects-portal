@@ -365,7 +365,7 @@ function getProjectsByTitle()
  LEFT JOIN users ON users.id = projects_new.curator
  WHERE
      projects_new.title LIKE LOWER('%портал%')");*/
-    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE projects_new.title LIKE LOWER(?)");
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE projects_new.title LIKE LOWER(?) AND projects_new.status!=0 AND projects_new.status!=3");
     $title = $_GET['title'];
     $q->bindValue(1, "%$title%");
     $q->execute();
