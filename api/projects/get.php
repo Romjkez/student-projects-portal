@@ -1,5 +1,8 @@
 <?php
 require_once '../headers.php';
+/*ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);*/
 
 $status0 = 0;
 $status1 = 1;
@@ -17,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
     } else if (is_numeric($_GET['user'])) {
         getUserProjects();
-    } else if (isset($_GET['title_part'])) {
+    } else if (iconv_strlen($_GET['title']) > 2) {
         getProjectsByTitle();
     } else {
         http_response_code(200);
@@ -327,14 +330,50 @@ function getUserProjects()
 function getProjectsByTitle()
 {
     require_once '../../database.php';
-    // todo ЗАКОНЧИТЬ ПОИСК ПО НАЗВАНИЮ
     $db = new Database();
-    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE title LIKE '%:title_part%'");
-    $q->bindParam(":title_part", $_GET['title_part']);
+    /* $q = $db->connection->prepare("SELECT
+     projects_new.id,
+     projects_new.title,
+     projects_new.description,
+     projects_new.members,
+     projects_new.deadline,
+     projects_new.finish_date,
+     projects_new.tags,
+     projects_new.status,
+     projects_new.adm_comment,
+     projects_new.files,
+     projects_new.avatar,
+     users.id,
+     users.name,
+     users.surname,
+     users.middle_name,
+     users.email,
+     users.phone,
+     users.stdgroup,
+     users.description,
+     users.avatar,
+     users.usergroup,
+     users.active_projects,
+     users.finished_projects
+ FROM
+     `projects_new`
+ LEFT JOIN users ON users.id = projects_new.curator
+ WHERE
+     projects_new.title LIKE LOWER('%портал%')");*/
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE projects_new.title LIKE LOWER(?)");
+    $title = $_GET['title'];
+    $q->bindValue(1, "%$title%");
     $q->execute();
-    if ($q->rowCount() > 0) {
-        http_response_code(200);
 
+    if ($q->rowCount() > 0) {
+        $result = [];
+        for ($i = 0; $i < $q->rowCount(); $i++) {
+            $obj = $q->fetchObject();
+            $obj->curator = getCurator($obj->curator);
+            $result[$i] = $obj;
+        }
+        http_response_code(200);
+        echo json_encode($result);
     } else {
         http_response_code(200);
         echo json_encode(['message' => 'Проекты не найдены']);
