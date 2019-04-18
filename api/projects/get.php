@@ -50,6 +50,7 @@ function getProjectById()
         http_response_code(200);
         echo json_encode(['message' => 'No projects found']);
     }
+    $db->disconnect();
 }
 
 function getProjectsByStatus()
@@ -120,6 +121,7 @@ function getProjectsByStatus()
             'data' => null,
         ]);
     }
+    $db->disconnect();
 }
 
 function getProjectsByCurator() // curator is id or email
@@ -186,6 +188,7 @@ function getProjectByCuratorId($curatorId)
             'data' => null
         ]);
     }
+    $db->disconnect();
 }
 
 function getProjectByCuratorAndStatus($curator, $status)
@@ -270,6 +273,7 @@ function getProjectByCuratorAndStatus($curator, $status)
             echo json_encode(['message' => 'No projects found']);
         }
     }
+    $db->disconnect();
 }
 
 function getUserProjects()
@@ -325,6 +329,7 @@ function getUserProjects()
     } else {
         echo json_encode(['active_projects' => null, 'finished_projects' => null, 'code2']);
     }
+    $db->disconnect();
 }
 
 function getProjectsByTitle()
@@ -364,7 +369,6 @@ function getProjectsByTitle()
     $title = $_GET['title'];
     $q->bindValue(1, "%$title%");
     $q->execute();
-
     if ($q->rowCount() > 0) {
         $result = [];
         for ($i = 0; $i < $q->rowCount(); $i++) {
@@ -378,6 +382,7 @@ function getProjectsByTitle()
         http_response_code(200);
         echo json_encode(['message' => 'Проекты не найдены']);
     }
+    $db->disconnect();
 }
 
 function fillMembers($members)
@@ -394,6 +399,7 @@ function fillMembers($members)
             }
         }
     }
+    $db->disconnect();
     return $members;
 }
 
