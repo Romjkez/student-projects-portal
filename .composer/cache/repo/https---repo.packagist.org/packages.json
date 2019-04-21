@@ -1,0 +1,46 @@
+{
+  "packages": [],
+  "notify": "https://packagist.org/downloads/%package%",
+  "notify-batch": "https://packagist.org/downloads/",
+  "providers-url": "/p/%package%$%hash%.json",
+  "metadata-url": "/p2/%package%.json",
+  "search": "https://packagist.org/search.json?q=%query%&type=%type%",
+  "provider-includes": {
+    "p/provider-2013$%hash%.json": {
+      "sha256": "c138f003faab972335f2547a79e8c390cbb8de5702b188f675867be7a86675c7"
+    },
+    "p/provider-2014$%hash%.json": {
+      "sha256": "1010cd13b170a1ecfa341bd7d0a3ba15409f3dc0e41dc5e4ba2f3e230f6b736a"
+    },
+    "p/provider-2015$%hash%.json": {
+      "sha256": "2ec46645d24beea0fc44f89e6432d7762956f35c63228e793918e6379b0943a8"
+    },
+    "p/provider-2016$%hash%.json": {
+      "sha256": "9a87c0b3ac56d55b6920421dcd4e18a2f06d60f8a979b4d3df023b0d435cd1ab"
+    },
+    "p/provider-2017$%hash%.json": {
+      "sha256": "955cfeaef9287d0be0334e2f01686b25c856fd44497a9c599df2da6578d67e69"
+    },
+    "p/provider-2018$%hash%.json": {
+      "sha256": "51fb53e8b02ad18e29372ad65b414838e91e27518fc284e00f55a3d5be6585fa"
+    },
+    "p/provider-2018-07$%hash%.json": {
+      "sha256": "5f3362c62be05ef2f5b4b5c259a620c76d83115565f255e33ecc2d420b3e2942"
+    },
+    "p/provider-2018-10$%hash%.json": {
+      "sha256": "d001bbe47c6f0f10d5aeac3117cd1a4eced330d6fb7e4e41e8149fb1643d2c8c"
+    },
+    "p/provider-2019-01$%hash%.json": {
+      "sha256": "eeed63d84fc4322d0eb5a9dc67e24c549df6c8a3edf901ee527be780b75cb765"
+    },
+    "p/provider-2019-04$%hash%.json": {
+      "sha256": "9af56151fa9a77e5635c14067522d2cba8cd3e732b3b5d8a8020ca3286a5ae33"
+    },
+    "p/provider-archived$%hash%.json": {
+      "sha256": "aa5fcbf2d1614866573449e284483233adadfd8dbcf909d5aefa5a0e7dc3c075"
+    },
+    "p/provider-latest$%hash%.json": {
+      "sha256": "3af6635f7c1491117c69e5bd03891db5606f47ccf7fc33641a89d0056d6cd5d5"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "name": "vendor_name/package_name",
-  "description": "description_text",
+  "description": "Backend for students projects portal",
   "minimum-stability": "stable",
   "license": "proprietary",
   "authors": [
@@ -15,6 +15,6 @@
     "ext-curl": "*",
     "ext-iconv": "*",
     "ext-pdo": "*",
-    "ext-apache": "*"
+    "workerman/workerman": "^3.5"
   }
 }

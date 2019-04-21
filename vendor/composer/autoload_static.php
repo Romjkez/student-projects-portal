@@ -6,18 +6,26 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit4a0326aaf04b37cb14cf25a1cb1c5c09
 {
-    public static $prefixLengthsPsr4 = array(
-        'F' =>
-            array(
-                'Firebase\\JWT\\' => 13,
-            ),
+    public static $prefixLengthsPsr4 = array (
+        'W' => 
+        array (
+            'Workerman\\' => 10,
+        ),
+        'F' => 
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
     );
 
-    public static $prefixDirsPsr4 = array(
-        'Firebase\\JWT\\' =>
-            array(
-                0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
-            ),
+    public static $prefixDirsPsr4 = array (
+        'Workerman\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/workerman/workerman',
+        ),
+        'Firebase\\JWT\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
+        ),
     );
 
     public static function getInitializer(ClassLoader $loader)
