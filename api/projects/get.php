@@ -1,10 +1,11 @@
 <?php
 require_once '../headers.php';
-
-$status0 = 0;
-$status1 = 1;
-$status2 = 2;
-$status3 = 3;
+/*ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+todo СОРТИРОВКИ: по дате окончания записи(убыв-возр), по заполненности(убыв-возр)
+todo ФИЛЬТРЫ: по тегам, по куратору
+*/
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (is_numeric($_GET['id'])) {
@@ -17,7 +18,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
     } else if (is_numeric($_GET['user'])) {
         getUserProjects();
-    } else if (isset($_GET['title_part'])) {
+    } else if (iconv_strlen($_GET['title']) > 2 && iconv_strlen($_GET['title']) < 100) {
         getProjectsByTitle();
     } else {
         http_response_code(200);
@@ -47,11 +48,13 @@ function getProjectById()
         http_response_code(200);
         echo json_encode(['message' => 'No projects found']);
     }
+    $db->disconnect();
 }
 
 function getProjectsByStatus()
 {
     $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
+    $sort = $_GET['sort'] || 'default';
     $status0 = 0;
     $status1 = 1;
     $status2 = 2;
@@ -117,6 +120,7 @@ function getProjectsByStatus()
             'data' => null,
         ]);
     }
+    $db->disconnect();
 }
 
 function getProjectsByCurator() // curator is id or email
@@ -183,6 +187,7 @@ function getProjectByCuratorId($curatorId)
             'data' => null
         ]);
     }
+    $db->disconnect();
 }
 
 function getProjectByCuratorAndStatus($curator, $status)
@@ -267,6 +272,7 @@ function getProjectByCuratorAndStatus($curator, $status)
             echo json_encode(['message' => 'No projects found']);
         }
     }
+    $db->disconnect();
 }
 
 function getUserProjects()
@@ -322,23 +328,31 @@ function getUserProjects()
     } else {
         echo json_encode(['active_projects' => null, 'finished_projects' => null, 'code2']);
     }
+    $db->disconnect();
 }
 
 function getProjectsByTitle()
 {
     require_once '../../database.php';
-    // todo ЗАКОНЧИТЬ ПОИСК ПО НАЗВАНИЮ
     $db = new Database();
-    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE title LIKE '%:title_part%'");
-    $q->bindParam(":title_part", $_GET['title_part']);
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE projects_new.title LIKE LOWER(?) AND projects_new.status!=0 AND projects_new.status!=3");
+    $title = $_GET['title'];
+    $q->bindValue(1, "%$title%");
     $q->execute();
     if ($q->rowCount() > 0) {
+        $result = [];
+        for ($i = 0; $i < $q->rowCount(); $i++) {
+            $obj = $q->fetchObject();
+            $obj->curator = getCurator($obj->curator);
+            $result[$i] = $obj;
+        }
         http_response_code(200);
-
+        echo json_encode($result);
     } else {
         http_response_code(200);
         echo json_encode(['message' => 'Проекты не найдены']);
     }
+    $db->disconnect();
 }
 
 function fillMembers($members)
@@ -355,6 +369,7 @@ function fillMembers($members)
             }
         }
     }
+    $db->disconnect();
     return $members;
 }
 
