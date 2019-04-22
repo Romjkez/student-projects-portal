@@ -48,8 +48,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                     echo json_encode(['message' => 'Method not supported']);
                 }
             } else {
-                http_response_code(401);
-                echo json_encode(['message' => 'You are not allowed to proceed this request']);
+                http_response_code(403);
+                echo json_encode(['message' => 'У вас недостаточно прав для выполнения этого запроса']);
             }
         } else {
             http_response_code(401);
@@ -60,6 +60,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
     }
 } else {
-    http_response_code(401);
+    http_response_code(400);
     echo json_encode(['message' => 'Required headers are wrong or missing']);
 }

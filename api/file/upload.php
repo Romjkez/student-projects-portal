@@ -5,6 +5,8 @@ ini_set('display_startup_errors', 1);
 
 function upload()
 {
+    require_once '../../database.php';
+    $db = new Database();
     // todo ПОМЕНЯТЬ ПУТЬ В ПРОДЕ
     $dir_template = 'D:/Programs/OpenServer/OSPanel/userdata/uploaded/p_';
     /*
@@ -35,8 +37,6 @@ function upload()
                 }
                 $res = move_uploaded_file($file['tmp_name'], $dir_template . $_REQUEST['project_id'] . '/' . $file['name']);
                 if ($res) {
-                    require_once '../../database.php';
-                    $db = new Database();
                     $q = $db->connection->prepare("INSERT INTO `files`(`id`, `project_id`, `title`, `link`) VALUES (NULL,?,?,?)");
                     $q->bindValue(1, $_REQUEST['project_id']);
                     $q->bindValue(2, $file['name']);
@@ -49,6 +49,7 @@ function upload()
                         http_response_code(200);
                         echo json_encode(['message' => 'Не удалось сохранить файл в документы проекта']);
                     }
+                    $db->disconnect();
                 } else echo json_encode(['message' => 'false']);
             }
         }
