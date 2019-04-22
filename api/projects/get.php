@@ -2,12 +2,10 @@
 require_once '../headers.php';
 /*ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);*/
-
-$status0 = 0;
-$status1 = 1;
-$status2 = 2;
-$status3 = 3;
+ini_set('display_startup_errors', 1);
+todo СОРТИРОВКИ: по дате окончания записи(убыв-возр), по заполненности(убыв-возр)
+todo ФИЛЬТРЫ: по тегам, по куратору
+*/
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (is_numeric($_GET['id'])) {
@@ -56,6 +54,7 @@ function getProjectById()
 function getProjectsByStatus()
 {
     $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
+    $sort = $_GET['sort'] || 'default';
     $status0 = 0;
     $status1 = 1;
     $status2 = 2;
@@ -336,35 +335,6 @@ function getProjectsByTitle()
 {
     require_once '../../database.php';
     $db = new Database();
-    /* $q = $db->connection->prepare("SELECT
-     projects_new.id,
-     projects_new.title,
-     projects_new.description,
-     projects_new.members,
-     projects_new.deadline,
-     projects_new.finish_date,
-     projects_new.tags,
-     projects_new.status,
-     projects_new.adm_comment,
-     projects_new.files,
-     projects_new.avatar,
-     users.id,
-     users.name,
-     users.surname,
-     users.middle_name,
-     users.email,
-     users.phone,
-     users.stdgroup,
-     users.description,
-     users.avatar,
-     users.usergroup,
-     users.active_projects,
-     users.finished_projects
- FROM
-     `projects_new`
- LEFT JOIN users ON users.id = projects_new.curator
- WHERE
-     projects_new.title LIKE LOWER('%портал%')");*/
     $q = $db->connection->prepare("SELECT * FROM projects_new WHERE projects_new.title LIKE LOWER(?) AND projects_new.status!=0 AND projects_new.status!=3");
     $title = $_GET['title'];
     $q->bindValue(1, "%$title%");
