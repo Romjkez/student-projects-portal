@@ -4,10 +4,10 @@ require_once('../../vendor/autoload.php');
 
 use Workerman\Worker;
 
-/*$users = [];
+$users = [];
 
 // создаём ws-сервер, к которому будут подключаться все наши пользователи
-$ws_worker = new Worker("websocket://0.0.0.0:8000");
+$ws_worker = new Worker("websocket://0.0.0.0:8080");
 // создаём обработчик, который будет выполняться при запуске ws-сервера
 $ws_worker->onWorkerStart = function() use (&$users)
 {
@@ -21,6 +21,7 @@ $ws_worker->onWorkerStart = function() use (&$users)
         if (isset($users[$data->user])) {
             $webconnection = $users[$data->user];
             $webconnection->send($data->message);
+            echo 'ok!!';
         }
     };
     $inner_tcp_worker->listen();
@@ -41,33 +42,6 @@ $ws_worker->onClose = function($connection) use(&$users)
     // удаляем параметр при отключении пользователя
     $user = array_search($connection, $users);
     unset($users[$user]);
-};
-
-// Run worker
-Worker::runAll();*/
-$ws_worker = new Worker('websocket://0.0.0.0:8000');
-
-$ws_worker->count = 4;
-
-// Emitted when new connection come
-
-$ws_worker->onWorkerStart = function () {
-    echo 'kekec';
-};
-
-$ws_worker->onConnect = function ($connection) {
-    echo 'hello!!!';
-};
-
-// Emitted when data received
-$ws_worker->onMessage = function ($connection, $data) {
-    // Send hello $data
-    $connection->send('hello ' . $data);
-};
-
-// Emitted when connection closed
-$ws_worker->onClose = function ($connection) {
-    echo "Connection closed\n";
 };
 
 // Run worker
