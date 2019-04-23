@@ -2,10 +2,9 @@
 
 final class Database
 {
-
     public $connection; // соединение с базой данных
     private $host = 'std-mysql';
-    //private $host = 'localhost';
+    // private $host = 'localhost';
     private $user = 'std_247';
     private $password = 'qwerty123';
     private $dbname = 'std_247';

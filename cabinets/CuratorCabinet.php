@@ -69,7 +69,7 @@ final class CuratorCabinet extends Cabinet
         $response = json_decode(curl_exec($q), true);
         curl_close($q);
         if ($response['message'] === 'true') {
-            header('Location:/cabinet');
+            header('Location:/cabinets');
         } else echo 'Упс! Что-то пошло не так при отправке запроса!<br>Перенаправляем в личный кабинет...';
     }
 
