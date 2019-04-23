@@ -9,8 +9,13 @@ $headers = getallheaders();
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    require_once 'get.php';
-    get();
+    if (is_numeric($_GET['project_id'])) {
+        require_once 'get.php';
+        echo json_encode(get($_GET['project_id']));
+    } else {
+        http_response_code(400);
+        json_encode(['message' => 'ID проекта не указан']);
+    }
 } else if (isset($headers['X-Auth-Token'])) {
     try {
         $token = JWT::decode($headers['X-Auth-Token'], SECRET_KEY, [ALGORITHM]);
@@ -51,7 +56,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                 }
             } else {
                 http_response_code(400);
-                json_encode(['message' => 'Не найден ни один проект с таким project_id']);
+                json_encode(['message' => 'Не найден ни один проект с таким project_id или project_id не указан']);
             }
         } else {
             http_response_code(401);

@@ -8,11 +8,8 @@ function upload()
     require_once '../../database.php';
     $db = new Database();
     // todo ПОМЕНЯТЬ ПУТЬ В ПРОДЕ
-    $dir_template = 'D:/Programs/OpenServer/OSPanel/userdata/uploaded/p_';
-    /*
-     * Warning: move_uploaded_file(/home/std/programma_KONFERENTsII_23_04_2019.pdf): failed to open stream: Permission denied in /home/std/new/api/file/upload.php on line 20
-     * Warning: move_uploaded_file(): Unable to move '/tmp/phpC9yPeh' to '/home/std/programma_KONFERENTsII_23_04_2019.pdf' in /home/std/new/api/file/upload.php on line 20
-     */
+    $dst = '/uploaded/p_';
+    $dir_template = $_SERVER['DOCUMENT_ROOT'] . $dst;
     $files = [];
     foreach ($_FILES as &$FILE) {
         if ($FILE['size'] < 200 && $FILE['error'] === 0) {
@@ -31,7 +28,6 @@ function upload()
                 $fileName = $file['name'];
                 echo json_encode(['message' => "«{$fileName}» уже существует в документах проекта"]);
             } else {
-
                 if (!is_dir($dir_template . $_REQUEST['project_id'] . '/')) {
                     mkdir($dir_template . $_REQUEST['project_id'] . '/');
                 }
@@ -40,11 +36,11 @@ function upload()
                     $q = $db->connection->prepare("INSERT INTO `files`(`id`, `project_id`, `title`, `link`) VALUES (NULL,?,?,?)");
                     $q->bindValue(1, $_REQUEST['project_id']);
                     $q->bindValue(2, $file['name']);
-                    $q->bindValue(3, $dir_template . $_REQUEST['project_id'] . '/' . $file['name']);
+                    $q->bindValue(3, $dst . $_REQUEST['project_id'] . '/' . $file['name']);
                     $isSuccessful = $q->execute();
                     if ($isSuccessful) {
                         http_response_code(201);
-                        echo json_encode(['message' => $dir_template . $_REQUEST['project_id'] . '/' . $file['name']]);
+                        echo json_encode(['message' => $dst . $_REQUEST['project_id'] . '/' . $file['name']]);
                     } else {
                         http_response_code(200);
                         echo json_encode(['message' => 'Не удалось сохранить файл в документы проекта']);

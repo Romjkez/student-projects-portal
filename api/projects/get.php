@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectByCuratorAndStatus($_GET['curator'], $_GET['status']);
     } else if (is_numeric($_GET['user'])) {
         getUserProjects();
-    } else if (isset($_GET['title_part'])) {
+    } else if (isset($_GET['title'])) {
         getProjectsByTitle();
     } else {
         http_response_code(200);
@@ -41,6 +41,13 @@ function getProjectById()
         $res = $q->fetchObject();
         $res->members = fillMembers($res->members);
         $res->curator = getCurator($res->curator);
+        require_once '../file/get.php';
+        $files = get($id);
+        if ($files) {
+            $res->files = $files;
+        } else {
+            $res->files = null;
+        }
         http_response_code(200);
         echo json_encode($res);
     } else {
@@ -56,6 +63,7 @@ function getProjectsByStatus()
     $status1 = 1;
     $status2 = 2;
     $status3 = 3;
+    require_once '../file/get.php';
     require_once '../../database.php';
     $db = new Database();
     $page = (int)$_GET['page'];
@@ -99,6 +107,10 @@ function getProjectsByStatus()
             $obj = $q->fetchObject();
             $obj->members = fillMembers($obj->members);
             $obj->curator = getCurator($obj->curator);
+            $files = get($obj->id);
+            if ($files) {
+                $obj->files = $files;
+            } else $obj->files = null;
             $res[$i] = $obj;
         }
         http_response_code(200);
@@ -144,6 +156,8 @@ function getProjectsByCurator() // curator is id or email
 function getProjectByCuratorId($curatorId)
 { // curator must be numeric(id)
     require_once '../../database.php';
+    require_once '../file/get.php';
+
     $db = new Database();
     $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE curator=:curator');
     $infoQuery->bindParam(':curator', $curatorId);
@@ -165,6 +179,10 @@ function getProjectByCuratorId($curatorId)
             $obj = $q->fetchObject();
             $obj->members = fillMembers($obj->members);
             $obj->curator = getCurator($obj->curator);
+            $files = get($obj->id);
+            if ($files) {
+                $obj->files = $files;
+            } else $obj->files = null;
             $res[$i] = $obj;
         }
         http_response_code(200);
@@ -193,6 +211,7 @@ function getProjectByCuratorAndStatus($curator, $status)
     $status2 = 2;
     $status3 = 3;
     require_once '../../database.php';
+    require_once '../file/get.php';
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
     $db = new Database();
@@ -236,6 +255,10 @@ function getProjectByCuratorAndStatus($curator, $status)
                 $obj = $q->fetchObject();
                 $obj->members = fillMembers($obj->members);
                 $obj->curator = getCurator($obj->curator);
+                $files = get($obj->id);
+                if ($files) {
+                    $obj->files = $files;
+                } else $obj->files = null;
                 $res[$i] = $obj;
             }
             http_response_code(200);
@@ -272,6 +295,7 @@ function getProjectByCuratorAndStatus($curator, $status)
 function getUserProjects()
 {
     require_once '../../database.php';
+    require_once '../file/get.php';
     $db = new Database();
     $q = $db->connection->prepare("SELECT active_projects,finished_projects FROM users WHERE id=:user");
     $q->bindParam(':user', $_GET['user']);
@@ -299,6 +323,10 @@ function getUserProjects()
                 if ($elem) {
                     $elem->members = fillMembers($elem->members);
                     $elem->curator = getCurator($elem->curator);
+                    $files = get($elem->id);
+                    if ($files) {
+                        $elem->files = $files;
+                    } else $elem->files = null;
                     array_push($result['active_projects'], $elem);
                 }
             }
@@ -310,6 +338,10 @@ function getUserProjects()
                 $elem = $projects->fetchObject();
                 $elem->members = fillMembers($elem->members);
                 $elem->curator = getCurator($elem->curator);
+                $files = get($elem->id);
+                if ($files) {
+                    $elem->files = $files;
+                } else $elem->files = null;
                 array_push($result['finished_projects'], $elem);
             }
 
@@ -327,17 +359,26 @@ function getUserProjects()
 function getProjectsByTitle()
 {
     require_once '../../database.php';
-    // todo ЗАКОНЧИТЬ ПОИСК ПО НАЗВАНИЮ
+    require_once '../file/get.php';
+
     $db = new Database();
-    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE title LIKE '%:title_part%'");
-    $q->bindParam(":title_part", $_GET['title_part']);
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE projects_new.title LIKE LOWER(?) AND projects_new.status!=0 AND projects_new.status!=3");
+    $title = $_GET['title'];
+    $q->bindValue(1, "%$title%");
     $q->execute();
     if ($q->rowCount() > 0) {
+        $result = [];
+        for ($i = 0; $i < $q->rowCount(); $i++) {
+            $obj = $q->fetchObject();
+            $obj->curator = getCurator($obj->curator);
+            $files = get($obj->id);
+            if ($files) {
+                $obj->files = $files;
+            } else $obj->files = null;
+            $result[$i] = $obj;
+        }
         http_response_code(200);
-
-    } else {
-        http_response_code(200);
-        echo json_encode(['message' => 'Проекты не найдены']);
+        echo json_encode($result);
     }
 }
 

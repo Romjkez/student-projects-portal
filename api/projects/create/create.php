@@ -6,7 +6,7 @@ function create()
             $tags = prepareTags($_POST['tags']);
             require_once '../../../database.php';
             $db = new Database();
-            $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`files`,`avatar`) VALUES (NULL,?,?,?,?,?,?,?,0,'',null,?)");
+            $q = $db->connection->prepare("INSERT INTO `projects_new` (`id`, `title`, `description`, `members`, `deadline`,`finish_date`, `curator`, `tags`, `status`,`adm_comment`,`avatar`) VALUES (NULL,?,?,?,?,?,?,?,0,'',?)");
             $q->bindParam(1, $_POST['title']);
             $q->bindParam(2, $_POST['description']);
             $q->bindParam(3, $_POST['members']);
