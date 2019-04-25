@@ -5,6 +5,9 @@ $status0 = 0;
 $status1 = 1;
 $status2 = 2;
 $status3 = 3;
+/*ini_set('error_reporting', E_ALL);
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);*/
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (is_numeric($_GET['id']) && !isset($_GET['sort'])) {
@@ -58,48 +61,34 @@ function getProjectById()
 
 function getProjectsByStatus()
 {
-    $status = (int)preg_replace('/[^0-9]/', '', $_GET['status']); // =0 if GET[status] does not contain numbers
-    $status0 = 0;
-    $status1 = 1;
-    $status2 = 2;
-    $status3 = 3;
+    // todo пофиксить ошибки сортировки
+    $status = preg_replace('/[^0-9]/', '', $_GET['status']);
     require_once '../file/get.php';
     require_once '../../database.php';
     $db = new Database();
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
-    if ($status == 30) {
-        $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status0 OR status=:status3');
-        $infoQuery->bindParam(':status0', $status0);
-        $infoQuery->bindParam(':status3', $status3);
-
-        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status0 OR status=:status3 ORDER BY id DESC LIMIT :per_page OFFSET :page");
-        $q->bindParam(':status0', $status0);
-        $q->bindParam(':status3', $status3);
-
-    } else if ($status == 12) {
-        $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status1 OR status=:status2');
-        $infoQuery->bindParam(':status1', $status1);
-        $infoQuery->bindParam(':status2', $status2);
-
-        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status1 OR status=:status2 ORDER BY id DESC LIMIT :per_page OFFSET :page");
-        $q->bindParam(':status1', $status1);
-        $q->bindParam(':status2', $status2);
+    if (iconv_strlen($status) == 2) {
+        $infoQuery = $db->connection->prepare('SELECT id FROM projects_new WHERE status IN(:status1,:status2)');
+        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status IN(:status1,:status2) ORDER BY :sort LIMIT :limit OFFSET :offset");
+        $infoQuery->bindValue(':status1', $status[0]);
+        $infoQuery->bindValue(':status2', $status[1]);
+        $q->bindValue(':status1', $status[0]);
+        $q->bindValue(':status2', $status[1]);
     } else {
-        $infoQuery = $db->connection->prepare('SELECT * FROM projects_new WHERE status=:status');
-        $infoQuery->bindParam(':status', $status);
-
-        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status ORDER BY id DESC LIMIT :per_page OFFSET :page");
-        $q->bindParam(':status', $status);
-
+        $infoQuery = $db->connection->prepare('SELECT id FROM projects_new WHERE status=:status1');
+        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status1 ORDER BY :sort LIMIT :limit OFFSET :offset");
+        $infoQuery->bindValue(':status1', $status);
+        $q->bindValue(':status1', $status);
     }
-    $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
-    $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
+    $q->bindValue(':sort', sortResult());
+    $q->bindValue(':limit', $per_page, PDO::PARAM_INT);
+    $q->bindValue(':offset', ($page - 1) * $per_page, PDO::PARAM_INT);
 
     $infoQuery->execute();
     $rows = $infoQuery->rowCount();
-    $pages = ceil($rows / $per_page);
 
+    $pages = ceil($rows / $per_page);
     $q->execute();
     if ($q->rowCount() > 0) {
         $res = [];
@@ -408,4 +397,32 @@ function getCurator($curatorId)
     return $q->rowCount() > 0 ? $q->fetchObject() : $curatorId;
 }
 
-
+function sortResult()
+{
+    if (isset($_GET['sort'])) {
+        switch (strtolower($_GET['sort'])) {
+            case '-finish_date':
+                return 'finish_date DESC';
+                break;
+            case 'finish_date':
+                return 'finish_date';
+                break;
+            case '-deadline':
+                return 'deadline DESC';
+                break;
+            case 'deadline':
+                return 'deadline';
+                break;
+            case 'id':
+                return 'id';
+                break;
+            case '-id':
+                return 'id DESC';
+                break;
+            // case '-occupancy': return ''; break;
+            // case 'occupancy': return ''; break;
+            default:
+                return 'id';
+        }
+    } else return 'id';
+}
