@@ -7,7 +7,7 @@ $status2 = 2;
 $status3 = 3;
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
-    if (is_numeric($_GET['id'])) {
+    if (is_numeric($_GET['id']) && !isset($_GET['sort'])) {
         getProjectById();
     } else if (is_numeric($_GET['status']) && !isset($_GET['curator']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectsByStatus();
@@ -20,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     } else if (isset($_GET['title'])) {
         getProjectsByTitle();
     } else {
-        http_response_code(200);
-        echo json_encode(['message' => 'No valid GET parameters found']);
+        http_response_code(400);
+        echo json_encode(['message' => 'Specified GET parameters are incorrect']);
     }
 
 } else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
