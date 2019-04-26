@@ -2,7 +2,7 @@
 function delete(int $post_id)
 {
     $db = new Database();
-    $deleteQuery = $db->connection->prepare("DELETE FROM chat WHERE id=?");
+    $deleteQuery = $db->connection->prepare("DELETE FROM chat WHERE message_id=?");
     $deleteQuery->bindValue(1, $post_id);
     $result = $deleteQuery->execute();
     if ($result) {

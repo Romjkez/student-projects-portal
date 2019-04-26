@@ -3,9 +3,12 @@
 use Firebase\JWT\JWT;
 
 header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST, OPTIONS, GET, DELETE, PUT');
+header('Access-Control-Expose-Headers: X-Auth-Token');
+header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
+header('Content-Type: application/json');
 
 require_once('../../vendor/autoload.php');
-require_once '../headers.php';
 require_once '../../constants.php';
 
 $headers = getallheaders();
@@ -19,8 +22,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
             $db = new Database();
             $userId = (int)$token->data->id;
             if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                // TODO need test
-                if (is_numeric($_POST['project_id']) && isset($_POST['message']) && isset($_POST['created_at'])) {
+                if (is_numeric($_POST['project_id']) && iconv_strlen($_POST['message']) > 0) {
                     $projectQuery = $db->connection->prepare("SELECT curator,members FROM projects_new WHERE id=?");
                     $projectQuery->bindValue(1, $_POST['project_id']);
                     $projectQuery->execute();
@@ -31,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                             $data = updateToken($token);
                             header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
                             require_once 'send.php';
-                            echo json_encode(send($_POST['project_id'], $token->data->id, $_POST['message'], $_POST['created_at']));
+                            echo json_encode(send($_POST['project_id'], $token->data->id, $_POST['message']));
                         } else {
                             http_response_code(403);
                             echo json_encode(['message' => 'You are not allowed to proceed this request']);
@@ -71,9 +73,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                     echo json_encode(['message' => 'Specify required GET parameters correctly']);
                 }
             } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
-                if (is_numeric($_REQUEST['id'])) {
-                    $messageQuery = $db->connection->prepare("SELECT author_id FROM chat WHERE id=?");
-                    $messageQuery->bindValue(1, $_REQUEST['id']);
+                if (is_numeric($_REQUEST['message_id'])) {
+                    $messageQuery = $db->connection->prepare("SELECT author_id FROM chat WHERE message_id=?");
+                    $messageQuery->bindValue(1, $_REQUEST['message_id']);
                     $messageQuery->execute();
                     if ($messageQuery->rowCount() > 0) {
                         $messageAuthor = $messageQuery->fetch()[0];
@@ -82,15 +84,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                             $data = updateToken($token);
                             header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
                             require_once 'delete.php';
-                            echo json_encode(delete($_REQUEST['id']));
+                            echo json_encode(delete($_REQUEST['message_id']));
                         } else {
                             http_response_code(403);
-                            echo json_encode(['message' => 'You are not allowed to proceed this request']);
+                            echo json_encode(['message' => 'Удалить сообщение может только его автор']);
                         }
                     } else {
                         http_response_code(200);
                         echo json_encode(['message' => 'Проект с таким ID не найден']);
                     }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['message' => 'Specify required parameters correctly']);
                 }
             } else {
                 http_response_code(405);
