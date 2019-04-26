@@ -16,9 +16,9 @@ function send(int $project_id, int $author_id, string $message, $created_at)
         $lastPost = $db->connection->prepare("SELECT * FROM chat WHERE id=?");
         $lastPost->bindValue(1, $lastPostId);
         $lastPost->execute();
-        return json_encode($lastPost->fetchObject());
+        return $lastPost->fetchObject();
     } else {
-        http_response_code(200);
-        return json_encode(['message' => $sendQuery->errorInfo()[2]]);
+        http_response_code(422);
+        return ['message' => $sendQuery->errorInfo()[2]];
     }
 }

@@ -8,8 +8,8 @@ function get(int $project_id)
     http_response_code(200);
     if ($getQuery->rowCount() > 0) {
         $result = $getQuery->fetchAll(PDO::FETCH_OBJ);
-        return json_encode($result);
+        return $result;
     } else {
-        return json_encode(null);
+        return ['message' => null];
     }
 }
