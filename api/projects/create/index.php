@@ -6,6 +6,7 @@ require_once '../../headers.php';
 require_once '../../../constants.php';
 require_once('../../../vendor/autoload.php');
 
+
 $headers = getallheaders();
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else if (isset($headers['X-Auth-Token'])) {

@@ -319,7 +319,6 @@ function getUserProjects()
                     array_push($result['active_projects'], $elem);
                 }
             }
-            json_decode($result['active_projects']);
             if (count($result['active_projects']) == 0) $result['active_projects'] = null;
             foreach ($finished as $item) {
                 $projects->bindValue(1, $item);

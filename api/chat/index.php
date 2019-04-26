@@ -1,48 +1,108 @@
 <?php
+
+use Firebase\JWT\JWT;
+
 header('Access-Control-Allow-Origin: *');
+
 require_once('../../vendor/autoload.php');
+require_once '../headers.php';
+require_once '../../constants.php';
 
-use Workerman\Worker;
+$headers = getallheaders();
 
-$users = [];
-
-// создаём ws-сервер, к которому будут подключаться все наши пользователи
-$ws_worker = new Worker("websocket://0.0.0.0:8080");
-// создаём обработчик, который будет выполняться при запуске ws-сервера
-$ws_worker->onWorkerStart = function() use (&$users)
-{
-    // создаём локальный tcp-сервер, чтобы отправлять на него сообщения из кода нашего сайта
-    $inner_tcp_worker = new Worker("tcp://127.0.0.1:1234");
-    // создаём обработчик сообщений, который будет срабатывать,
-    // когда на локальный tcp-сокет приходит сообщение
-    $inner_tcp_worker->onMessage = function($connection, $data) use (&$users) {
-        $data = json_decode($data);
-        // отправляем сообщение пользователю по userId
-        if (isset($users[$data->user])) {
-            $webconnection = $users[$data->user];
-            $webconnection->send($data->message);
-            echo 'ok!!';
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+} else if (isset($headers['X-Auth-Token'])) {
+    try {
+        $token = JWT::decode($headers['X-Auth-Token'], SECRET_KEY, [ALGORITHM]);
+        if ($token->exp > time()) {
+            require_once '../../database.php';
+            $db = new Database();
+            if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                // TODO need test
+                if (is_numeric($_POST['project_id']) && isset($_POST['message']) && isset($_POST['created_at'])) {
+                    $projectQuery = $db->connection->prepare("SELECT curator,members FROM projects_new WHERE id=?");
+                    $projectQuery->bindValue(1, $_POST['project_id']);
+                    $projectQuery->execute();
+                    $project = $projectQuery->fetchObject();
+                    $project->members = parseMembers($project->members);
+                    if (array_search($project->members, $token->data->id) || $token->data->id == $project->curator) {
+                        $updated = time();
+                        $data = [
+                            'iat' => $token->iat,
+                            'upd' => $updated,
+                            'jti' => $token->jti,
+                            'iss' => $token->iss,
+                            'exp' => $token->exp + ($token->upd - $token->iat),
+                            'data' => [
+                                'email' => $token->data->email,
+                                'usergroup' => $token->data->usergroup,
+                                'id' => $token->data->id
+                            ]
+                        ];
+                        header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
+                        require_once 'send.php';
+                        echo send($_POST['project_id'], $token->data->id, $_POST['message'], $_POST['created_at']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['message' => 'Specify required POST parameters correctly']);
+                }
+            } else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+                if (is_numeric($_GET['project_id'])) {
+                    $projectQuery = $db->connection->prepare("SELECT curator,members FROM projects_new WHERE id=?");
+                    $projectQuery->bindValue(1, $_GET['project_id']);
+                    $projectQuery->execute();
+                    $project = $projectQuery->fetchObject();
+                    $project->members = parseMembers($project->members);
+                    if (array_search($project->members, $token->data->id) || $token->data->id == $project->curator) {
+                        $updated = time();
+                        $data = [
+                            'iat' => $token->iat,
+                            'upd' => $updated,
+                            'jti' => $token->jti,
+                            'iss' => $token->iss,
+                            'exp' => $token->exp + ($token->upd - $token->iat),
+                            'data' => [
+                                'email' => $token->data->email,
+                                'usergroup' => $token->data->usergroup,
+                                'id' => $token->data->id
+                            ]
+                        ];
+                        header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
+                        require_once 'get.php';
+                        echo get($_GET['project_id']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['message' => 'Specify required GET parameters correctly']);
+                }
+            } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+                // todo FINISH DELETETION
+                echo json_encode('DELETE method is not ready yet');
+            } else {
+                http_response_code(405);
+                echo json_encode(['message' => 'Method not supported']);
+            }
+        } else {
+            http_response_code(401);
+            echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
         }
-    };
-    $inner_tcp_worker->listen();
-};
-
-$ws_worker->onConnect = function($connection) use (&$users)
+    } catch (Exception $e) {
+        http_response_code(401);
+        echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
+    }
+} else {
+    http_response_code(400);
+    echo json_encode(['message' => 'Required headers are wrong or missing']);
+}
+function parseMembers($members)
 {
-    $connection->onWebSocketConnect = function($connection) use (&$users)
-    {
-        // при подключении нового пользователя сохраняем get-параметр, который же сами и передали со страницы сайта
-        $users[$_GET['user']] = $connection;
-        // вместо get-параметра можно также использовать параметр из cookie, например $_COOKIE['PHPSESSID']
-    };
-};
-
-$ws_worker->onClose = function($connection) use(&$users)
-{
-    // удаляем параметр при отключении пользователя
-    $user = array_search($connection, $users);
-    unset($users[$user]);
-};
-
-// Run worker
-Worker::runAll();
+    $result = [];
+    $members = json_decode($members);
+    for ($i = 0; $i < count($members); $i++) {
+        foreach ($members[$i] as $key => $value) {
+            $value == 0 ? array_push($result, $value) : false;
+        }
+    }
+    return $result;
+}
