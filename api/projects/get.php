@@ -61,29 +61,28 @@ function getProjectById()
 
 function getProjectsByStatus()
 {
-    // todo пофиксить ошибки сортировки
     $status = preg_replace('/[^0-9]/', '', $_GET['status']);
     require_once '../file/get.php';
     require_once '../../database.php';
     $db = new Database();
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status IN(?,?) ORDER BY " . sortResult() . " LIMIT ? OFFSET ?");
+    $infoQuery = $db->connection->prepare('SELECT id FROM projects_new WHERE status IN(?,?)');
+
     if (iconv_strlen($status) == 2) {
-        $infoQuery = $db->connection->prepare('SELECT id FROM projects_new WHERE status IN(:status1,:status2)');
-        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status IN(:status1,:status2) ORDER BY :sort LIMIT :limit OFFSET :offset");
-        $infoQuery->bindValue(':status1', $status[0]);
-        $infoQuery->bindValue(':status2', $status[1]);
-        $q->bindValue(':status1', $status[0]);
-        $q->bindValue(':status2', $status[1]);
+        $infoQuery->bindValue(1, $status[0]);
+        $infoQuery->bindValue(2, $status[1]);
+        $q->bindValue(1, $status[0]);
+        $q->bindValue(2, $status[1]);
     } else {
-        $infoQuery = $db->connection->prepare('SELECT id FROM projects_new WHERE status=:status1');
-        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE status=:status1 ORDER BY :sort LIMIT :limit OFFSET :offset");
-        $infoQuery->bindValue(':status1', $status);
-        $q->bindValue(':status1', $status);
+        $infoQuery->bindValue(1, $status);
+        $infoQuery->bindValue(2, $status);
+        $q->bindValue(1, $status);
+        $q->bindValue(2, $status);
     }
-    $q->bindValue(':sort', sortResult());
-    $q->bindValue(':limit', $per_page, PDO::PARAM_INT);
-    $q->bindValue(':offset', ($page - 1) * $per_page, PDO::PARAM_INT);
+    $q->bindValue(3, $per_page, PDO::PARAM_INT);
+    $q->bindValue(4, ($page - 1) * $per_page, PDO::PARAM_INT);
 
     $infoQuery->execute();
     $rows = $infoQuery->rowCount();
@@ -127,12 +126,11 @@ function getProjectsByCurator() // curator is id or email
     } else {
         require_once '../../database.php';
         $db = new Database();
-        $q = $db->connection->prepare("SELECT * FROM users WHERE email=?");
+        $q = $db->connection->prepare("SELECT id FROM users WHERE email=?");
         $q->bindParam(1, $_GET['curator']);
         $q->execute();
         if ($q->rowCount() > 0) {
-            $res = $q->fetchObject();
-            $curatorId = $res->id;
+            $curatorId = (int)$q->fetch()[0];
             $db->disconnect();
             getProjectByCuratorId($curatorId);
         } else {
@@ -155,7 +153,7 @@ function getProjectByCuratorId($curatorId)
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
 
-    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator ORDER BY id DESC LIMIT :per_page OFFSET :page");
+    $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator ORDER BY " . sortResult() . " LIMIT :per_page OFFSET :page");
     $q->bindParam(':curator', $curatorId);
     $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
     $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
@@ -194,44 +192,32 @@ function getProjectByCuratorId($curatorId)
 
 function getProjectByCuratorAndStatus($curator, $status)
 {
-    $status = (int)preg_replace('/[^0-9]/', '', $status); // =0 if GET[status] does not contain numbers
-    $status0 = 0;
-    $status1 = 1;
-    $status2 = 2;
-    $status3 = 3;
+    $status = preg_replace('/[^0-9]/', '', $_GET['status']);
     require_once '../../database.php';
     require_once '../file/get.php';
     $page = (int)$_GET['page'];
     $per_page = (int)$_GET['per_page'];
     $db = new Database();
+
     if (is_numeric($curator)) {
-        if ($status == 30) {
-            $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3)");
-            $infoQuery->bindParam(':status0', $status0);
-            $infoQuery->bindParam(':status3', $status3);
+        $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=? AND status IN(?,?)");
+        $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=? AND status IN(?,?) ORDER BY " . sortResult() . " LIMIT ? OFFSET ?");
+        $q->bindParam(1, $curator);
+        $infoQuery->bindParam(1, $curator);
 
-            $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status0 OR status=:status3) ORDER BY id DESC LIMIT :per_page OFFSET :page");
-            $q->bindParam(':status0', $status0);
-            $q->bindParam(':status3', $status3);
-        } else if ($status == 12) {
-            $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status1 OR status=:status2)");
-            $infoQuery->bindParam(':status1', $status1);
-            $infoQuery->bindParam(':status2', $status2);
-
-            $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND (status=:status1 OR status=:status2) ORDER BY id DESC LIMIT :per_page OFFSET :page");
-            $q->bindParam(':status1', $status1);
-            $q->bindParam(':status2', $status2);
+        if (iconv_strlen($status) == 2) {
+            $infoQuery->bindValue(2, $status[0]);
+            $infoQuery->bindValue(3, $status[1]);
+            $q->bindValue(2, $status[0]);
+            $q->bindValue(3, $status[1]);
         } else {
-            $infoQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND status=:status");
-            $infoQuery->bindParam(':status', $status);
-
-            $q = $db->connection->prepare("SELECT * FROM projects_new WHERE curator=:curator AND status=:status ORDER BY id DESC LIMIT :per_page OFFSET :page");
-            $q->bindParam(':status', $status);
+            $infoQuery->bindValue(2, $status);
+            $infoQuery->bindValue(3, $status);
+            $q->bindValue(2, $status);
+            $q->bindValue(3, $status);
         }
-        $q->bindParam(':curator', $curator);
-        $q->bindValue(':per_page', $per_page, PDO::PARAM_INT);
-        $q->bindValue(':page', ($page - 1) * $per_page, PDO::PARAM_INT);
-        $infoQuery->bindParam(':curator', $curator);
+        $q->bindValue(4, $per_page, PDO::PARAM_INT);
+        $q->bindValue(5, ($page - 1) * $per_page, PDO::PARAM_INT);
 
         $infoQuery->execute();
         $rows = $infoQuery->rowCount();
@@ -267,12 +253,11 @@ function getProjectByCuratorAndStatus($curator, $status)
             ]);
         }
     } else {
-        $q = $db->connection->prepare("SELECT * FROM users WHERE email=?");
+        $q = $db->connection->prepare("SELECT id FROM users WHERE email=?");
         $q->bindParam(1, $_GET['curator']);
         $q->execute();
         if ($q->rowCount() > 0) {
-            $res = $q->fetchObject();
-            $curatorId = $res->id;
+            $curatorId = (int)$q->fetch()[0];
             getProjectByCuratorAndStatus($curatorId, $status);
         } else {
             http_response_code(200);
