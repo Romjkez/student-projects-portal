@@ -1,14 +1,10 @@
 <?php
 require_once '../headers.php';
 
-$status0 = 0;
-$status1 = 1;
-$status2 = 2;
-$status3 = 3;
 /*ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);*/
-
+// todo filters by: status, curator, tag
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (is_numeric($_GET['id']) && !isset($_GET['sort'])) {
         getProjectById();

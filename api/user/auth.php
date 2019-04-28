@@ -59,11 +59,6 @@ function authorizeByEmailAndPass()
     $res = $q->fetch(PDO::FETCH_ASSOC);
 
     if ($q->rowCount() > 0 && password_verify($data['pass'], $res['password']) == true) {
-
-        try {
-            $tokenId = base64_encode(random_bytes(32));
-        } catch (Exception $e) {
-        }
         $issuedAt = time();
         $expire = $issuedAt + SESSION_DURATION; // 24 hours
         $serverName = 'http://' . $_SERVER['HTTP_HOST'];
