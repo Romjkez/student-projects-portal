@@ -1,6 +1,6 @@
 <?php
 require_once '../headers.php';
-
+require_once '../../constants.php';
 /*ini_set('error_reporting', E_ALL);
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);*/
@@ -18,15 +18,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getUserProjects();
     } else if (isset($_GET['title'])) {
         getProjectsByTitle();
+    } else if (isset($_GET['tags'])) {
+        getProjectsByTags(); // todo finish
     } else {
         http_response_code(400);
-        echo json_encode(['message' => 'Specified GET parameters are incorrect']);
+        echo json_encode(['message' => WRONG_OR_MISSING_PARAMS_ERROR]);
     }
 
 } else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
-    echo json_encode(['message' => 'Method not supported']);
+    echo json_encode(['message' => WRONG_METHOD_ERROR]);
 }
 function getProjectById()
 {
@@ -349,6 +351,11 @@ function getProjectsByTitle()
         http_response_code(200);
         echo json_encode($result);
     }
+}
+
+function getProjectsByTags()
+{
+
 }
 
 function fillMembers($members)
