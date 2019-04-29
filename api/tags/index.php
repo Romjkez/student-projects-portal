@@ -5,6 +5,7 @@ header('Access-Control-Expose-Headers: X-Auth-Token');
 header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
 require_once '../../constants.php';
 require_once('../../vendor/autoload.php');
+require_once '../utils/updateToken.php';
 
 use Firebase\JWT\JWT;
 
@@ -19,19 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
         $token = JWT::decode($headers['X-Auth-Token'], SECRET_KEY, [ALGORITHM]);
         if ($token->exp > time()) {
             if ($token->data->usergroup == 3) {
-                $updated = time();
-                $data = [
-                    'iat' => $token->iat,
-                    'upd' => $updated,
-                    'jti' => $token->jti,
-                    'iss' => $token->iss,
-                    'exp' => $token->exp + ($token->upd - $token->iat),
-                    'data' => [
-                        'email' => $token->data->email,
-                        'usergroup' => $token->data->usergroup,
-                        'id' => $token->data->id
-                    ]
-                ];
+                $data = updateToken($token);
                 header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
 
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

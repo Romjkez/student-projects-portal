@@ -2,8 +2,13 @@
 
 use Firebase\JWT\JWT;
 
-require_once '../../headers.php';
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Expose-Headers: X-Auth-Token');
+header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
+
 require_once '../../../constants.php';
+require_once '../../utils/updateToken.php';
 require_once('../../../vendor/autoload.php');
 
 
@@ -40,18 +45,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(401);
     echo json_encode(['message' => 'Required headers are wrong or missing']);
 }
-function updateToken($token)
-{
-    return [
-        'iat' => $token->iat,
-        'upd' => time(),
-        'jti' => $token->jti,
-        'iss' => $token->iss,
-        'exp' => $token->exp + ($token->upd - $token->iat),
-        'data' => [
-            'email' => $token->data->email,
-            'usergroup' => $token->data->usergroup,
-            'id' => $token->data->id
-        ]
-    ];
-}
+
