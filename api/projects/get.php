@@ -18,8 +18,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getUserProjects();
     } else if (isset($_GET['title'])) {
         getProjectsByTitle();
-    } else if (isset($_GET['tags'])) {
-        getProjectsByTags(); // todo finish
+    } else if (isset($_GET['tags']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+        getProjectsByTags();
     } else {
         http_response_code(400);
         echo json_encode(['message' => WRONG_OR_MISSING_PARAMS_ERROR]);
@@ -99,22 +99,15 @@ function getProjectsByStatus()
             } else $obj->files = null;
             $res[$i] = $obj;
         }
-        http_response_code(200);
-        echo json_encode([
-            'pages' => $pages,
-            'page' => $page,
-            'per_page' => $per_page,
-            'data' => $res,
-        ]);
-    } else {
-        http_response_code(200);
-        echo json_encode([
-            'pages' => $pages,
-            'page' => $page,
-            'per_page' => $per_page,
-            'data' => null,
-        ]);
-    }
+
+    } else $res = null;
+    http_response_code(200);
+    echo json_encode([
+        'pages' => $pages,
+        'page' => $page,
+        'per_page' => $per_page,
+        'data' => $res,
+    ]);
 }
 
 function getProjectsByCurator() // curator is id or email
@@ -170,22 +163,15 @@ function getProjectByCuratorId($curatorId)
             } else $obj->files = null;
             $res[$i] = $obj;
         }
-        http_response_code(200);
-        echo json_encode([
-            'pages' => $pages,
-            'page' => $page,
-            'per_page' => $per_page,
-            'data' => $res,
-        ]);
-    } else {
-        http_response_code(200);
-        echo json_encode([
-            'pages' => $pages,
-            'page' => $page,
-            'per_page' => $per_page,
-            'data' => null
-        ]);
-    }
+    } else $res = null;
+
+    http_response_code(200);
+    echo json_encode([
+        'pages' => $pages,
+        'page' => $page,
+        'per_page' => $per_page,
+        'data' => $res,
+    ]);
 }
 
 function getProjectByCuratorAndStatus($curator, $status)
@@ -234,22 +220,15 @@ function getProjectByCuratorAndStatus($curator, $status)
                 } else $obj->files = null;
                 $res[$i] = $obj;
             }
-            http_response_code(200);
-            echo json_encode([
-                'pages' => $pages,
-                'page' => $page,
-                'per_page' => $per_page,
-                'data' => $res,
-            ]);
-        } else {
-            http_response_code(200);
-            echo json_encode([
-                'pages' => $pages,
-                'page' => $page,
-                'per_page' => $per_page,
-                'data' => null
-            ]);
-        }
+        } else $res = null;
+
+        http_response_code(200);
+        echo json_encode([
+            'pages' => $pages,
+            'page' => $page,
+            'per_page' => $per_page,
+            'data' => $res,
+        ]);
     } else {
         $q = $db->connection->prepare("SELECT id FROM users WHERE email=?");
         $q->bindParam(1, $_GET['curator']);
@@ -355,7 +334,52 @@ function getProjectsByTitle()
 
 function getProjectsByTags()
 {
+    $tags = explode(',', $_GET['tags']);
+    if (count($tags) === 1 && trim($tags[0]) == '') {
+        http_response_code(400);
+        echo json_encode(['message' => 'Укажите хотя бы один тег для фильтра']);
+    } else {
+        require_once '../../database.php';
+        require_once '../file/get.php';
+        $page = (int)$_GET['page'];
+        $per_page = (int)$_GET['per_page'];
+        $db = new Database();
+        $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?)");
+        $result = [];
+        foreach ($tags as $tag) {
+            $needle = trim($tag);
+            $projectQuery->bindValue(1, "%$needle%");
+            $projectQuery->execute();
+            if ($projectQuery->rowCount() > 0) {
+                $projects = [];
+                for ($i = 0; $i < $projectQuery->rowCount(); $i++) {
+                    $obj = $projectQuery->fetchObject();
+                    $obj->members = fillMembers($obj->members);
+                    $obj->curator = getCurator($obj->curator);
+                    $files = get($obj->id);
+                    if ($files) {
+                        $obj->files = $files;
+                    } else $obj->files = null;
+                    $projects[$i] = $obj;
+                }
 
+                $diff = array_diff_key($projects, $result);
+                if (count($diff) > 0) {
+                    $result = array_merge($result, $diff);
+                }
+            }
+        }
+        $db->disconnect();
+        $pages = ceil(count($result) / $per_page);
+        $result = count($result) > 0 ? array_slice($result, ($page - 1) * $per_page, $per_page) : null;
+        http_response_code(200);
+        echo json_encode([
+            'pages' => $pages,
+            'page' => $page,
+            'per_page' => $per_page,
+            'data' => $result,
+        ]);
+    }
 }
 
 function fillMembers($members)
