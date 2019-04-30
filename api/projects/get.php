@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 1);*/
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     if (is_numeric($_GET['id']) && !isset($_GET['sort'])) {
         getProjectById();
-    } else if (is_numeric($_GET['status']) && !isset($_GET['curator']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
+    } else if (is_numeric($_GET['status']) && !isset($_GET['curator']) && !isset($_GET['tags']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectsByStatus();
     } else if (isset($_GET['curator']) && !isset($_GET['status']) && ($_GET['page']) > 0 && $_GET['per_page'] > 0) {
         getProjectsByCurator();
@@ -344,10 +344,15 @@ function getProjectsByTags()
         $page = (int)$_GET['page'];
         $per_page = (int)$_GET['per_page'];
         $db = new Database();
-        $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?)");
+        if (is_numeric($_GET['status'])) {
+            $status = $_GET['status'];
+            $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?) AND status IN(?,?)");
+            $projectQuery->bindValue(2, $status[0]);
+            $projectQuery->bindValue(3, $status[1] !== '' ? $status[1] : $status[0]);
+        } else $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?)");
         $result = [];
         foreach ($tags as $tag) {
-            if (trim($tag) !== '' || trim($tag) !== 'all') {
+            if (trim($tag) !== '' || trim($tag) === 'all') {
                 $needle = trim($tag) === 'all' ? '' : trim($tag);
                 $projectQuery->bindValue(1, "%$needle%");
                 $projectQuery->execute();
