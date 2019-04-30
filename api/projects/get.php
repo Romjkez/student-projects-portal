@@ -347,25 +347,27 @@ function getProjectsByTags()
         $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?)");
         $result = [];
         foreach ($tags as $tag) {
-            $needle = trim($tag);
-            $projectQuery->bindValue(1, "%$needle%");
-            $projectQuery->execute();
-            if ($projectQuery->rowCount() > 0) {
-                $projects = [];
-                for ($i = 0; $i < $projectQuery->rowCount(); $i++) {
-                    $obj = $projectQuery->fetchObject();
-                    $obj->members = fillMembers($obj->members);
-                    $obj->curator = getCurator($obj->curator);
-                    $files = get($obj->id);
-                    if ($files) {
-                        $obj->files = $files;
-                    } else $obj->files = null;
-                    $projects[$i] = $obj;
-                }
+            if (trim($tag) !== '') {
+                $needle = trim($tag);
+                $projectQuery->bindValue(1, "%$needle%");
+                $projectQuery->execute();
+                if ($projectQuery->rowCount() > 0) {
+                    $projects = [];
+                    for ($i = 0; $i < $projectQuery->rowCount(); $i++) {
+                        $obj = $projectQuery->fetchObject();
+                        $obj->members = fillMembers($obj->members);
+                        $obj->curator = getCurator($obj->curator);
+                        $files = get($obj->id);
+                        if ($files) {
+                            $obj->files = $files;
+                        } else $obj->files = null;
+                        $projects[$i] = $obj;
+                    }
 
-                $diff = array_diff_key($projects, $result);
-                if (count($diff) > 0) {
-                    $result = array_merge($result, $diff);
+                    $diff = array_diff_key($projects, $result);
+                    if (count($diff) > 0) {
+                        $result = array_merge($result, $diff);
+                    }
                 }
             }
         }
