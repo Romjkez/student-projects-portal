@@ -347,8 +347,8 @@ function getProjectsByTags()
         $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?)");
         $result = [];
         foreach ($tags as $tag) {
-            if (trim($tag) !== '') {
-                $needle = trim($tag);
+            if (trim($tag) !== '' || trim($tag) !== 'all') {
+                $needle = trim($tag) === 'all' ? '' : trim($tag);
                 $projectQuery->bindValue(1, "%$needle%");
                 $projectQuery->execute();
                 if ($projectQuery->rowCount() > 0) {
@@ -370,6 +370,7 @@ function getProjectsByTags()
                     }
                 }
             }
+            if (trim($tag) === 'all') break; // prevent multiple 'all' handling in URL params
         }
         $db->disconnect();
         $pages = ceil(count($result) / $per_page);
