@@ -27,22 +27,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                     create();
                 } else {
                     http_response_code(405);
-                    echo json_encode(['message' => 'Method not supported']);
+                    echo json_encode(['message' => WRONG_METHOD_ERROR]);
                 }
             } else {
                 http_response_code(403);
-                echo json_encode(['message' => 'You are not allowed to proceed this request']);
+                echo json_encode(['message' => FORBIDDEN_ERROR]);
             }
         } else {
             http_response_code(401);
-            echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
+            echo json_encode(['message' => EXPIRED_SESSION_OR_WRONG_TOKEN_ERROR]);
         }
     } catch (Exception $e) {
         http_response_code(401);
-        echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
+        echo json_encode(['message' => EXPIRED_SESSION_OR_WRONG_TOKEN_ERROR]);
     }
 } else {
-    http_response_code(401);
-    echo json_encode(['message' => 'Required headers are wrong or missing']);
+    http_response_code(400);
+    echo json_encode(['message' => WRONG_OR_MISSING_HEADERS_ERROR]);
 }
 

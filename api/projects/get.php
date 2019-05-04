@@ -346,10 +346,10 @@ function getProjectsByTags()
         $db = new Database();
         if (is_numeric($_GET['status'])) {
             $status = $_GET['status'];
-            $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?) AND status IN(?,?)");
+            $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?) AND status IN(?,?) ORDER BY id DESC");
             $projectQuery->bindValue(2, $status[0]);
             $projectQuery->bindValue(3, $status[1] !== '' ? $status[1] : $status[0]);
-        } else $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?)");
+        } else $projectQuery = $db->connection->prepare("SELECT * FROM projects_new WHERE tags LIKE(?) ORDER BY id DESC");
         $result = [];
         foreach ($tags as $tag) {
             if (trim($tag) !== '' || trim($tag) === 'all') {
