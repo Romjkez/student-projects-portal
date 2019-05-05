@@ -369,7 +369,7 @@ function getProjectsByTags()
                         $projects[$i] = $obj;
                     }
 
-                    $diff = array_diff_key($projects, $result);
+                    $diff = array_udiff($projects, $result, 'object_compare_func');
                     if (count($diff) > 0) {
                         $result = array_merge($result, $diff);
                     }
@@ -444,4 +444,11 @@ function sortResult()
                 return 'id';
         }
     } else return 'id';
+}
+
+function object_compare_func($obj1, $obj2)
+{
+    if ($obj1->id == $obj2->id) return 0;
+    else if ($obj1 > $obj2) return 1;
+    else return -1;
 }
