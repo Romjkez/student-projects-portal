@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                             echo json_encode(send($_POST['project_id'], $token->data->id, $_POST['message']));
                         } else {
                             http_response_code(403);
-                            echo json_encode(['message' => 'You are not allowed to proceed this request']);
+                            echo json_encode(['message' => FORBIDDEN_ERROR]);
                         }
                     } else {
                         http_response_code(200);
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                     }
                 } else {
                     http_response_code(400);
-                    echo json_encode(['message' => 'Specify required POST parameters correctly']);
+                    echo json_encode(['message' => WRONG_OR_MISSING_PARAMS_ERROR]);
                 }
             } else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
                 if (is_numeric($_GET['project_id'])) {
@@ -56,14 +56,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                         $project = $projectQuery->fetchObject();
                         $project->members = parseMembers($project->members);
 
-                        if (in_array($userId, $project->members) || $userId == $project->curator) {
+                        if (in_array($userId, $project->members) || $userId == $project->curator || $token->data->usergroup == 3) {
                             $data = updateToken($token);
                             header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
                             require_once 'get.php';
                             echo json_encode(get($_GET['project_id']));
                         } else {
                             http_response_code(403);
-                            echo json_encode(['message' => 'You are not allowed to proceed this request']);
+                            echo json_encode(['message' => FORBIDDEN_ERROR]);
                         }
                     } else {
                         http_response_code(200);
@@ -71,9 +71,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                     }
                 } else {
                     http_response_code(400);
-                    echo json_encode(['message' => 'Specify required GET parameters correctly']);
+                    echo json_encode(['message' => WRONG_OR_MISSING_PARAMS_ERROR]);
                 }
-            } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+            } else if ($_SERVER['REQUEST_METHOD'] == 'DELETE' || $_SERVER['REQUEST_METHOD'] == 'PUT') {
                 if (is_numeric($_REQUEST['message_id'])) {
                     $messageQuery = $db->connection->prepare("SELECT author_id FROM chat WHERE message_id=?");
                     $messageQuery->bindValue(1, $_REQUEST['message_id']);
@@ -84,11 +84,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                         if ($messageAuthor == $userId) {
                             $data = updateToken($token);
                             header('X-Auth-Token: ' . JWT::encode($data, SECRET_KEY, ALGORITHM));
-                            require_once 'delete.php';
-                            echo json_encode(delete($_REQUEST['message_id']));
+                            if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
+                                require_once 'delete.php';
+                                echo json_encode(delete($_REQUEST['message_id']));
+                            } else {
+                                require_once 'edit.php';
+                                echo json_encode(edit($_REQUEST['message_id'], $_REQUEST['message']));
+                            }
                         } else {
                             http_response_code(403);
-                            echo json_encode(['message' => 'Удалить сообщение может только его автор']);
+                            echo json_encode(['message' => 'Удалять/редактировать сообщение может только его автор']);
                         }
                     } else {
                         http_response_code(200);
@@ -96,23 +101,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                     }
                 } else {
                     http_response_code(400);
-                    echo json_encode(['message' => 'Specify required parameters correctly']);
+                    echo json_encode(['message' => WRONG_OR_MISSING_PARAMS_ERROR]);
                 }
             } else {
                 http_response_code(405);
-                echo json_encode(['message' => 'Method not supported']);
+                echo json_encode(['message' => WRONG_METHOD_ERROR]);
             }
         } else {
             http_response_code(401);
-            echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
+            echo json_encode(['message' => EXPIRED_SESSION_OR_WRONG_TOKEN_ERROR]);
         }
     } catch (Exception $e) {
         http_response_code(401);
-        echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
+        echo json_encode(['message' => EXPIRED_SESSION_OR_WRONG_TOKEN_ERROR]);
     }
 } else {
     http_response_code(400);
-    echo json_encode(['message' => 'Required headers are wrong or missing']);
+    echo json_encode(['message' => WRONG_OR_MISSING_HEADERS_ERROR]);
 }
 /**
  * @param $members

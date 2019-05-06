@@ -43,10 +43,10 @@ function upload()
                         echo json_encode(['message' => $dst . $_REQUEST['project_id'] . '/' . $file['name']]);
                     } else {
                         http_response_code(200);
-                        echo json_encode(['message' => 'Не удалось сохранить файл в документы проекта']);
+                        echo json_encode(['message' => $q->errorInfo()[2]]);
                     }
                     $db->disconnect();
-                } else echo json_encode(['message' => 'false']);
+                } else echo json_encode(['message' => 'Не удалось сохранить файл']);
             }
         }
     } else {
