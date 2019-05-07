@@ -12,11 +12,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         echo getUserByEmail($_GET['email']);
     } else if (isset($_GET['surname'])) {
         echo getUserBySurname($_GET['surname']);
-    } else echo json_encode(["message" => "Unknown GET parameter"]);
+    } else echo json_encode(["message" => WRONG_OR_MISSING_PARAMS_ERROR]);
 } else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
-    echo json_encode(["message" => "Method not supported"]);
+    echo json_encode(["message" => WRONG_METHOD_ERROR]);
 }
 
 function getUsersById($ids)
@@ -42,7 +42,7 @@ function getUserByID($id)
     $result = $stmt->fetchObject();
     $db->disconnect();
     if (empty($result)) {
-        http_response_code(200);
+        http_response_code(404);
         return json_encode(['message' => 'User not found']);
     } else {
         http_response_code(200);
@@ -59,7 +59,7 @@ function getUserBySurname($surname)
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     $db->disconnect();
     if (empty($result)) {
-        http_response_code(200);
+        http_response_code(404);
         return json_encode(['message' => 'User not found']);
     } else {
         http_response_code(200);
@@ -76,7 +76,7 @@ function getUserByEmail($email)
     $result = $stmt->fetchObject();
     $db->disconnect();
     if (empty($result)) {
-        http_response_code(200);
+        http_response_code(404);
         return json_encode(['message' => 'User not found']);
     } else {
         http_response_code(200);

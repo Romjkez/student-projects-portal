@@ -17,13 +17,13 @@ function add()
             $responseItem = $response->fetchObject();
             $db->disconnect();
             http_response_code(201);
-            echo json_encode($responseItem);
+            return $responseItem;
         } else {
             http_response_code(422);
-            echo json_encode(['message' => $errors[2]]);
+            return ['message' => $errors[2]];
         }
     } else {
         http_response_code(200);
-        echo json_encode(['message' => 'Specify both category and value']);
+        return ['message' => 'Specify both category and value'];
     }
 }

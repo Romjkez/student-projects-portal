@@ -3,13 +3,14 @@ function update()
 {
     $db = new Database();
     $tags = prepareTags($_REQUEST['tags']);
+    $avatar = $_REQUEST['avatar'] || '';
     $updateQuery = $db->connection->prepare("UPDATE projects_new SET title=:title, description=:description, members=:members, tags=:tags, curator=:curator, avatar=:avatar, deadline=:deadline, finish_date=:finish_date WHERE id=:id");
     $updateQuery->bindParam(':title', trim($_REQUEST['title']));
     $updateQuery->bindParam(':description', trim($_REQUEST['description']));
     $updateQuery->bindParam(':members', $_REQUEST['members']);
     $updateQuery->bindParam(':tags', $tags);
     $updateQuery->bindParam(':curator', $_REQUEST['curator']);
-    $updateQuery->bindParam(':avatar', $_REQUEST['avatar']);
+    $updateQuery->bindParam(':avatar', $avatar);
     $updateQuery->bindParam(':deadline', $_REQUEST['deadline']);
     $updateQuery->bindParam(':finish_date', $_REQUEST['finish_date']);
     $updateQuery->bindParam(':id', $_REQUEST['id']);

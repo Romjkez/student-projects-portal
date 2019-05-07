@@ -2,6 +2,10 @@
 
 use Firebase\JWT\JWT;
 
+ini_set('error_reporting', 1);
+ini_set('display_errors', 0);
+ini_set('display_startup_errors', 0);
+
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: PUT');
 header('Access-Control-Expose-Headers: X-Auth-Token');

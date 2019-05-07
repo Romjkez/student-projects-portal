@@ -14,7 +14,7 @@ $headers = getallheaders();
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     require_once 'get.php';
-    get();
+    echo json_encode(get());
 } else if (isset($headers['X-Auth-Token'])) {
     try {
         $token = JWT::decode($headers['X-Auth-Token'], SECRET_KEY, [ALGORITHM]);
@@ -25,30 +25,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
                 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     require_once 'add.php';
-                    add();
+                    echo json_encode(add());
                 } else if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
                     require_once 'update.php';
-                    update();
+                    echo json_encode(update());
                 } else if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
                     require_once 'delete.php';
-                    delete();
+                    echo json_encode(delete());
                 } else {
                     http_response_code(405);
-                    echo json_encode(['message' => 'Method not supported']);
+                    echo json_encode(['message' => WRONG_METHOD_ERROR]);
                 }
             } else {
                 http_response_code(403);
-                echo json_encode(['message' => 'У вас недостаточно прав для выполнения этого запроса']);
+                echo json_encode(['message' => FORBIDDEN_ERROR]);
             }
         } else {
             http_response_code(401);
-            echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
+            echo json_encode(['message' => EXPIRED_SESSION_OR_WRONG_TOKEN_ERROR]);
         }
     } catch (Exception $e) {
         http_response_code(401);
-        echo json_encode(['message' => 'Сессия устарела или токен аутенфикации неверный']);
+        echo json_encode(['message' => EXPIRED_SESSION_OR_WRONG_TOKEN_ERROR]);
     }
 } else {
     http_response_code(400);
-    echo json_encode(['message' => 'Required headers are wrong or missing']);
+    echo json_encode(['message' => WRONG_OR_MISSING_HEADERS_ERROR]);
 }

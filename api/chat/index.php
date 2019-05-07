@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                             echo json_encode(['message' => FORBIDDEN_ERROR]);
                         }
                     } else {
-                        http_response_code(200);
+                        http_response_code(404);
                         echo json_encode(['message' => 'Проект с таким ID не найден']);
                     }
                 } else {
@@ -66,7 +66,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                             echo json_encode(['message' => FORBIDDEN_ERROR]);
                         }
                     } else {
-                        http_response_code(200);
+                        http_response_code(404);
                         echo json_encode(['message' => 'Проект с таким ID не найден']);
                     }
                 } else {
@@ -96,7 +96,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                             echo json_encode(['message' => 'Удалять/редактировать сообщение может только его автор']);
                         }
                     } else {
-                        http_response_code(200);
+                        http_response_code(404);
                         echo json_encode(['message' => 'Проект с таким ID не найден']);
                     }
                 } else {

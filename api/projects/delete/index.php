@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
                             echo json_encode(['message' => 'Невозможно удалить проект, не выполнено хотя бы одно из условий: 1) вы администратор; 2) вы куратор не прошедшего модерацию проекта']);
                         }
                     } else {
-                        http_response_code(200);
+                        http_response_code(404);
                         echo json_encode(['message' => 'Проект с указанным ID не найден']);
                     }
                 } else {

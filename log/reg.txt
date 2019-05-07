@@ -5,3 +5,9 @@
      | EMAIL:memem@ma.ru
      | USERGROUP:1
     
+2019-05-07[23:00:57] | NAME:Test
+     | SURNAME:Testov
+     | MIDDLENAME:
+     | EMAIL:testov@ma.ru
+     | USERGROUP:1
+    

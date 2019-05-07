@@ -15,17 +15,17 @@ function delete()
             $errors = $q->errorInfo();
             if ($errors[2] == null) {
                 http_response_code(200);
-                echo json_encode(['message' => 'true']);
+                return ['message' => 'true'];
             } else {
                 http_response_code(422);
-                echo json_encode(['message' => $errors[2]]);
+                return ['message' => $errors[2]];
             }
         } else {
-            http_response_code(422);
-            echo json_encode(['message' => 'Tag with such ID was not found']);
+            http_response_code(404);
+            return ['message' => 'Tag with such ID was not found'];
         }
     } else {
-        http_response_code(200);
-        echo json_encode(['message' => 'Specify tag ID']);
+        http_response_code(400);
+        return ['message' => 'Specify tag ID'];
     }
 }

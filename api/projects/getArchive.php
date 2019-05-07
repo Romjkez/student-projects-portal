@@ -11,12 +11,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         getProjectsByCurator();
     } else {
         http_response_code(200);
-        echo json_encode(['message' => 'No valid GET parameters found']);
+        echo json_encode(['message' => WRONG_OR_MISSING_PARAMS_ERROR]);
     }
 } else if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 } else {
     http_response_code(405);
-    echo json_encode(['message' => 'Method not supported']);
+    echo json_encode(['message' => WRONG_METHOD_ERROR]);
 }
 function getProjectById()
 {

@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if (count($result) < 1) {
-        http_response_code(200);
+        http_response_code(404);
         echo json_encode(['message' => 'No users found']);
     } else {
         http_response_code(200);

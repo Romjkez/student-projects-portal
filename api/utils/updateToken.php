@@ -1,4 +1,8 @@
 <?php
+/**
+ * @param $token
+ * @return array
+ */
 function updateToken($token)
 {
     return [
