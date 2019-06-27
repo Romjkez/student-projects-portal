@@ -1,0 +1,818 @@
+@font-face {
+    font-family: Roboto-Light;
+    font-face-name: "Roboto-Light";
+    src: url(../fonts/RobotoLight.eot) format("eot"), url(../fonts/RobotoLight.woff) format("woff");
+    font-weight: 300;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: Roboto-Medium;
+    font-face-name: "Roboto-Medium";
+    src: url(../fonts/RobotoMedium.eot) format("eot"), url(../fonts/RobotoMedium.woff) format("woff");
+    font-weight: 500;
+    font-style: normal
+}
+
+@font-face {
+    font-family: CenturyGothic;
+    font-face-name: "CenturyGothic";
+    src: url(../fonts/CenturyGothic.eot) format("eot"), url(../fonts/CenturyGothic.woff) format("woff");
+    font-weight: 400;
+    font-style: normal
+}
+
+@font-face {
+    font-family: CenturyGothic-Bold;
+    font-face-name: "CenturyGothic-Bold";
+    src: url(../fonts/CenturyGothic-Bold.eot) format("eot"), url(../fonts/CenturyGothic-Bold.woff) format("woff");
+    font-weight: 700;
+    font-style: normal
+}
+
+ul {
+    margin: 1rem 0 0
+}
+
+
+body {
+    font-family: Roboto-Medium, Arial, sans-serif;
+    margin: 0
+}
+
+.headerWrapper {
+    background: url(../img/header_bg.jpg) center no-repeat;
+    background-size: auto 100%
+}
+
+.header h1 {
+    font-size: 3.5em;
+    color: #fff;
+    padding: 10% 0;
+    line-height: 100%;
+}
+
+.header > h1 > small {
+    font-size: 35%;
+    color: #d97c1d;
+}
+
+.btnBlock {
+    font-family: "Roboto-Light", Arial, sans-serif;
+}
+
+.btnBlock > a {
+    color: #fff;
+    border: 3px solid #fff;
+    transition: all 250ms;
+}
+
+.btnBlock a:hover {
+    text-decoration: none;
+    background-color: #fff;
+    color: #000;
+}
+
+.btnBlock > button, .btnBlock > a {
+    padding: 2% 8%;
+    font-size: 1.4em;
+}
+
+.btnBlock > button {
+    background-color: #ed7b07;
+    border: none;
+    color: #fff;
+    transition: background-color 250ms;
+}
+
+.btnBlock > button:hover {
+    cursor: pointer;
+    background-color: #ef9233;
+}
+
+.about {
+    margin-top: 2%
+}
+
+.childrenTechnopark h2 {
+    font-size: 2em;
+    margin: 8% 0
+}
+
+.childrenTechnopark p, .contacts__email a, .contacts__phone a, .courseInfo p, .courseType__length p, .description p, .locationInfo p, .peopleContacts p, .scheduleInfo {
+    color: #a8a8aa;
+    font-size: 1.3em;
+    font-family: Roboto Light, Arial, sans-serif
+}
+
+.description p span {
+    background-color: #ed7b07;
+    color: #fff;
+    font-weight: bold;
+}
+
+.childrenTechnopark h2 span {
+    color: #0c5d5e
+}
+
+.whyUs {
+    margin-top: 6%;
+    margin-bottom: 3%
+}
+
+.photoGallery {
+    margin: 1% 0 0
+}
+
+.photoGallery a {
+    text-decoration: underline;
+    color: #0c5d5e;
+    font-size: 1.2em
+}
+
+.photoGallery span:hover {
+    cursor: pointer
+}
+
+.sideImage__content {
+    background: #a8a8aa;
+    height: 400px;
+}
+
+.sideImage__content img {
+    height: 90%;
+    margin-right: -10%;
+    object-fit: cover;
+    -o-object-fit: cover;
+    border: 4px solid #0c5d5e
+}
+
+.groupsInfo {
+    margin-top: 3%;
+    color: #0c5d5e;
+    font-size: 1.2em
+}
+
+.activities, .contactsHeader, .courseCostHeader {
+    margin-top: 4%;
+    margin-bottom: 4%
+}
+
+.activity img {
+    width: 75%;
+    min-width: 150px;
+    clip-path: circle(50%)
+}
+
+.activityContent h5 {
+    margin-top: 9%
+}
+
+.requirements {
+    background: #a0a0a0;
+    margin: 5% auto;
+    color: #fff
+}
+
+.requirements h5 {
+    margin: 3% auto
+}
+
+.courseInfo, .scheduleInfo, .schedule p {
+    margin-top: 3%
+}
+
+.scheduleElem {
+    margin-top: 1%
+}
+
+.scheduleElem:first-child, .scheduleElem:last-child {
+    background: #0c5d5e
+}
+
+.scheduleElem:nth-child(2) {
+    background: #a8a8aa
+}
+
+.scheduleElemInner {
+    width: 90%;
+    margin: 0 auto
+}
+
+.scheduleElem__actType {
+    background: #fff;
+    width: 50%;
+    margin-top: 15%;
+    font-size: 1.2em;
+    align-self: flex-start;
+    padding: 3%
+}
+
+.scheduleElem__time {
+    align-self: flex-end;
+    font-size: 2.6em;
+    color: #fff;
+    margin-top: 50%;
+    margin-bottom: 15%
+}
+
+.courseType {
+    max-width: 350px;
+    width: 25%;
+    box-shadow: 0 0 160px 0 #e6e6e6
+}
+
+.courseType:nth-child(2) {
+    margin-left: 5%
+}
+
+.courseType__length h2 {
+    color: #a8a8aa;
+    font-size: 4em;
+    margin-top: 15%
+}
+
+.courseType__length h2 span {
+    color: #ed7b07
+}
+
+.courseType__cost {
+    font-size: 1.5em;
+    font-family: Roboto Light, Arial, sans-serif;
+    margin-top: 20%
+}
+
+.courseType__cost > span {
+    font-size: .7em;
+    color: #a8a8aa;
+}
+
+.contacts__email a {
+    text-decoration: underline
+}
+
+.contacts img, .locationInfo img {
+    width: 100%;
+    height: auto;
+    max-width: 75px;
+    margin-right: 2%
+}
+
+.contacts__phone {
+    margin-top: 10%
+}
+
+.peopleContacts {
+    border: 4px solid #0c5d5e
+}
+
+.peopleContacts p > span {
+    color: #000
+}
+
+.locationInfo {
+    margin-top: 2%
+}
+
+.locationInfo p {
+    display: inline
+}
+
+.locationMap {
+    margin: 4% 0 0;
+    padding: 0
+}
+
+iframe {
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 400px
+}
+
+.social {
+    margin: 5% auto
+}
+
+.social a > img {
+    width: 100%;
+    max-width: 80px;
+    height: auto;
+    transition: .2s
+}
+
+.social a > img:hover {
+    transform: scale(1.1)
+}
+
+.option {
+    color: #0c5d5e;
+    font-size: 1.2em;
+    margin-bottom: 2%;
+    text-align: center
+}
+
+.activityModalInfo__header h5 {
+    margin: 0 0 2rem;
+    flex: 3
+}
+
+.activityModalInfo__header div {
+    flex: 1;
+    margin: 0 0 2rem;
+    height: .8em;
+    background-color: #0c5d5e
+}
+
+.activityModalInfo__content p span {
+    color: #0c5d5e
+}
+
+.activityModalInfo__content p:not(.lastP) {
+    margin-bottom: 3rem
+}
+
+.activityModalAdditional img {
+    clip-path: circle(50%)
+}
+
+.activityModalAdditional__list ul li {
+    color: #828282;
+    list-style: none
+}
+
+.activityModalAdditional__list ul li:before {
+    content: "•"
+}
+
+.activityModalAdditional__partners {
+    background: #ebebeb;
+    border-radius: 10px;
+    color: #0c5d5e;
+    padding: 2rem;
+    margin: 1rem 0 0
+}
+
+.serviceBlock__content {
+    background: url(../img/4plusSign.svg) 100% 20% no-repeat #e9f2f2;
+    color: #373b2f;
+    background-size: 65% 60%;
+    font-family: CenturyGothic, Roboto-Regular, sans-serif;
+    width: 65%
+}
+
+.serviceBlock__content p {
+    margin: 0 0 0 5%
+}
+
+.bd-modal-bannerInfo .modal-footer {
+    background: #a5ccc8;
+    border-top: none;
+    min-height: 100px;
+    color: #fff
+}
+
+.bd-modal-bannerInfo .modal-footer img {
+    width: 74px;
+    height: auto;
+    position: absolute;
+    bottom: 14%;
+    left: 10%
+}
+
+.bd-modal-bannerInfo .modal-footer .footerContact {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    color: #fff
+}
+
+.bd-modal-bannerInfo .modal-footer .footerContact span {
+    font-family: Roboto-Light, sans-serif
+}
+
+.headerOrderBtn {
+    background: #ed7b07;
+    display: block;
+    border: none;
+    text-align: center;
+}
+
+.orderBtn {
+    background: #ed7b07;
+    display: block;
+    width: 67%;
+    border: none;
+    text-align: center;
+    margin: 16% auto;
+    padding: 2% 17%;
+    font-size: 1.5em
+}
+
+.orderBtn, .orderBtn:hover {
+    color: #fff;
+    text-decoration: none
+}
+
+.moreBtn {
+    text-decoration: underline;
+    color: #a8a8aa;
+    font-size: 1.25rem;
+    line-height: 24px;
+    border: none;
+    background: none;
+    font-family: Roboto Light, Arial, sans-serif
+}
+
+.moreBtn:hover, .orderBtn:hover {
+    cursor: pointer
+}
+
+.btn-close {
+    width: 35px;
+    height: 35px;
+    z-index: 500;
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: url(../img/exitButton.svg) 50% no-repeat
+}
+
+.bd-modal-order img {
+    max-width: 450px;
+    margin: 0 auto;
+}
+
+#orderForm .btn {
+    background-color: rgb(226, 192, 31);
+    color: #fff;
+}
+
+#orderForm .btn:hover {
+    background-color: #E2D526;
+}
+
+.bd-modal-vitrazh .activityModalInfo__content ul li {
+    margin-left: 3%;
+}
+
+.bd-modal-vitrazh .activityModalInfo__content .lastP {
+    margin-top: 3rem;
+}
+
+@media screen and (max-width: 413px) {
+    .btnBlock > button {
+        margin: 10% 0 0 0;
+    }
+
+    .btnBlock > a, .btnBlock > button {
+        width: 75%;
+    }
+}
+
+@media screen and (max-width: 767.5px) {
+    ul {
+        padding-left: 0;
+        padding-inline-start: 0
+    }
+
+    .activityModalInfo__header h5 {
+        margin: 3rem 0 2rem
+    }
+
+    .activityModalInfo__header div {
+        display: none
+    }
+
+    .line-left, .line-right {
+        font-size: 1.4em;
+        padding: 0
+    }
+
+    .line-left p, .line-right p {
+        background: #eee;
+        text-align: center;
+        padding: 2% 0
+    }
+
+    .groupsInfo p span:after {
+        content: " ";
+        width: 100%;
+        display: block
+    }
+
+    .groupsInfo {
+        font-size: 1.1em
+    }
+
+    .activityContent h5, .moreBtn {
+        font-size: .9em
+    }
+
+    .scheduleElem__actType {
+        width: 70%;
+        margin-top: 3%
+    }
+
+    .scheduleElem__time {
+        margin-top: 5%;
+        margin-bottom: 5%
+    }
+
+    .courseType {
+        width: 90%;
+        margin: 5px 0 0 !important
+    }
+
+    .peopleContacts p span:first-child:after, .peopleContacts p span:first-child:before {
+        content: "";
+        display: block;
+        width: 100%
+    }
+
+    .contacts__email {
+        margin-top: 2%
+    }
+
+    .headerWrapper {
+        background-size: cover
+    }
+
+    .header h1 {
+        font-size: 2.5em
+    }
+
+    .sideImage__content img {
+        border: none;
+        margin: 0;
+        width: 100%
+    }
+
+    .sideImage__content {
+        background: none
+    }
+
+    .option {
+        text-align: left
+    }
+
+    .activityModalInfo__header div {
+        visibility: hidden
+    }
+
+    .serviceBlock__content {
+        background-position: 95% 0;
+        background-size: 50% 40%
+    }
+
+    .whyUs {
+        margin: 10% 0 0
+    }
+
+    .whyUs > p {
+        margin: 0
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 992.95px) {
+    .sideImage__content {
+        height: 250px;
+    }
+
+    .sideImage__content img {
+        width: 100%;
+        margin: 0
+    }
+
+    .activity:nth-child(3), .activity:nth-child(4), .activity:nth-child(5), .activity:nth-child(6), .activity:nth-child(7), .activity:nth-child(8) {
+        margin-top: 7%
+    }
+
+    .courseType {
+        width: 45%
+    }
+
+    .contacts__email, .contacts__phone {
+        margin-top: 3%
+    }
+
+    .activityModalInfo__header div {
+        visibility: hidden
+    }
+}
+
+@media screen and (min-width: 768px) {
+    .modal-body.padding-lg {
+        padding: 3rem
+    }
+
+    .groupsInfo p span:after {
+        content: " |";
+        color: #ed7b07
+    }
+
+    .line-left, .line-right {
+        overflow: hidden;
+        font-size: 1.4em
+    }
+
+    .line-left p, .line-right p {
+        display: inline-block
+    }
+
+    .line-left:before, .line-right:after {
+        content: "";
+        display: inline-block;
+        vertical-align: middle;
+        width: 100%;
+        height: 1px;
+        background-color: #000;
+        position: relative
+    }
+
+    .line-left:before {
+        margin-left: -100%;
+        left: -14px
+    }
+
+    .line-right:after {
+        margin-right: -100%;
+        right: -14px
+    }
+
+    #hint {
+        z-index: 9999;
+        position: absolute;
+        display: none;
+        top: 0;
+        left: 0;
+        background-color: #000;
+        padding: 5px 10px;
+        color: #fff
+    }
+}
+
+@media screen and (min-width: 993px) and (max-width: 1199.95px) {
+    .line-left, .line-right {
+        overflow: hidden;
+        font-size: 1.8em
+    }
+
+    .childrenTechnopark h2 {
+        font-size: 2.3em
+    }
+
+    .childrenTechnopark p, .contacts__email a, .contacts__phone a, .courseInfo p, .courseType__length p, .description p, .locationInfo p, .peopleContacts p, .photoGallery span, .scheduleInfo {
+        font-size: 1.4em
+    }
+
+    .sideImage__content {
+        height: 300px;
+    }
+
+    .activity:nth-child(3), .activity:nth-child(4), .activity:nth-child(5), .activity:nth-child(6), .activity:nth-child(7), .activity:nth-child(8) {
+        margin-top: 7%
+    }
+
+    .courseType {
+        width: 50%
+    }
+
+    .contacts__email, .contacts__phone {
+        margin-top: 2%
+    }
+}
+
+@media screen and (min-width: 1201px) and (max-width: 1450.95px) {
+    .whyUs {
+        margin-top: 7%;
+        margin-bottom: 6%
+    }
+
+    .activities, .contactsHeader, .courseCostHeader {
+        margin-top: 6%;
+        margin-bottom: 6%
+    }
+
+    .scheduleElem__actType {
+        width: 60%;
+        font-size: 1.25em;
+        padding: 4%
+    }
+
+    .scheduleElem__time {
+        font-size: 2.4em
+    }
+
+    .courseInfo, .scheduleInfo, .schedule p {
+        margin-top: 5%
+    }
+
+    .locationInfo {
+        margin-top: 3%
+    }
+
+    .sideImage__content img {
+        height: 85%
+    }
+}
+
+@media screen and (max-width: 1199.5px) {
+    .peopleContacts {
+        border-right: none;
+        border-left: none
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    .activity:nth-child(5), .activity:nth-child(6), .activity:nth-child(7), .activity:nth-child(8) {
+        margin-top: 3%
+    }
+}
+
+@media screen and (max-width: 1500px) {
+    .courseType__length h2 {
+        font-size: 3em
+    }
+}
+
+@media screen and (min-width: 1551px) and (max-width: 1750px) {
+    .sideImage__content img {
+        height: 77%
+    }
+}
+
+@media screen and (min-width: 1451px) and (max-width: 1550px) {
+    .sideImage__content img {
+        height: 72%
+    }
+}
+
+@media screen and (max-width: 1114.5px) {
+    .bd-modal-order h3 {
+        margin: 2% 0;
+    }
+
+    .bd-modal-order .modalOrderInfo {
+        margin: 0 0 2% 0;
+    }
+
+    .bd-modal-order .btn-close {
+        width: 25px;
+        height: 25px;
+        top: .5rem;
+        right: .5rem;
+    }
+
+    .bd-modal-bannerInfo .rightPart .serviceBlock img {
+        margin-left: 0
+    }
+
+    .bd-modal-bannerInfo .modal-footer .footerContact {
+        display: block
+    }
+
+    .serviceBlock__content {
+        width: 95%
+    }
+
+    .serviceBlock__content p {
+        margin: 5%
+    }
+
+    .bd-modal-bannerInfo .imgBlock {
+        min-height: 150px;
+        background-size: 87% auto
+    }
+
+    .bd-modal-bannerInfo .textBlock h5, .bd-modal-bannerInfo .textBlock h6 {
+        padding-left: 0
+    }
+
+    .bd-modal-bannerInfo h5 {
+        font-size: 1.1rem
+    }
+
+    .modal-footer > div > div > img {
+        display: none
+    }
+
+    .padding-lg {
+        padding: 2rem 0 1rem !important
+    }
+}
+
+@media screen and (min-width: 1115px) and (max-width: 1550.5px) {
+    .serviceBlock__content {
+        width: 85%
+    }
+
+    .bd-modal-bannerInfo .imgBlock {
+        background-size: 105% auto
+    }
+
+    .bd-modal-bannerInfo .modal-footer .footerContact span {
+        font-size: .86em
+    }
+}
