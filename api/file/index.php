@@ -3,6 +3,7 @@ require_once '../headers.php';
 require_once '../../constants.php';
 require_once('../../vendor/autoload.php');
 require_once '../../api/utils/updateToken.php';
+require_once '../utils/getAllHeaders.php';
 
 use Firebase\JWT\JWT;
 

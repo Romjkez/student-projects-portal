@@ -9,8 +9,8 @@ header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
 
 require_once '../../../constants.php';
 require_once '../../utils/updateToken.php';
-require_once('../../../vendor/autoload.php');
-
+require_once '../../../vendor/autoload.php';
+require_once '../../utils/getAllHeaders.php';
 
 $headers = getallheaders();
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {

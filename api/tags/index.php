@@ -4,8 +4,9 @@ header('Access-Control-Allow-Methods: POST, OPTIONS, PUT, GET, DELETE');
 header('Access-Control-Expose-Headers: X-Auth-Token');
 header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
 require_once '../../constants.php';
-require_once('../../vendor/autoload.php');
+require_once '../../vendor/autoload.php';
 require_once '../utils/updateToken.php';
+require_once '../utils/getAllHeaders.php';
 
 use Firebase\JWT\JWT;
 

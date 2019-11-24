@@ -8,9 +8,10 @@ header('Access-Control-Expose-Headers: X-Auth-Token');
 header('Access-Control-Allow-Headers: X-Auth-Token, Content-Type');
 header('Content-Type: application/json');
 
-require_once('../../vendor/autoload.php');
+require_once '../../vendor/autoload.php';
 require_once '../../constants.php';
 require_once '../utils/updateToken.php';
+require_once '../utils/getAllHeaders.php';
 
 $headers = getallheaders();
 
